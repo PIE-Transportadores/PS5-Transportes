@@ -1,0 +1,22 @@
+
+
+.container{
+    border: solid rgba(0, 0, 0, .2);
+    
+}
+
+.tela_gerenciamento{
+    border: solid rgba(0, 0, 0, .2);
+    
+}
+.tela_gerenciamento button{
+
+    border: solid rgba(0, 0, 0, .2);
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 10px 10px 10px 10px;
+    margin: 30px;
+
+}
