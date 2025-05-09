@@ -2,11 +2,20 @@
 
 .container{
     border: solid rgba(0, 0, 0, .2);
-    
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+        
 }
 
 .tela_gerenciamento{
     border: solid rgba(0, 0, 0, .2);
+       
+}
+
+.tela_gerenciamento h1{
+    text-align: center;
+    
     
 }
 .tela_gerenciamento button{
@@ -14,9 +23,19 @@
     border: solid rgba(0, 0, 0, .2);
     border-radius: 20px;
     display: flex;
+    text-align: center;
     justify-content: space-between;
     flex-direction: column;
     padding: 10px 10px 10px 10px;
     margin: 30px;
 
+}
+
+.modal_func{
+    position: relative;
+    top: 25;
+    left: 35;
+    justify-content: center;
+    display: flex;
+    
 }

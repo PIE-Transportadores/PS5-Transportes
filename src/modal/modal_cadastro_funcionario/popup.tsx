@@ -1,4 +1,6 @@
 
+import './cadastro_fun.css'
+
 interface ModalFuncionario{
     isOpen: boolean,
     onClose:()=>void,
@@ -10,14 +12,12 @@ const Popup: React.FC<ModalFuncionario> = ({isOpen,onClose,children}) =>{
     if (isOpen == false) return null
 
     return(
-        <div className="#">
-            <div className="#">
+        <div className="modal_func">
+            <div className="mini_modal">
                 <button onClick={onClose} className="#">X</button>
-                {children}
+                <div className='conteudo_modal'>{children}</div>
             </div>
-            
         </div>
     )
 }
-
 export default Popup

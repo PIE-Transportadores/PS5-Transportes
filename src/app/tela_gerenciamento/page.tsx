@@ -13,18 +13,19 @@ export default  function Tela_gerenciamento(){
 
     return(
         <div className='container'>
-            <div>
-                <h1>Menu</h1> 
-            </div>
-
+           
             <div className="tela_gerenciamento">
+                <h1>Menu</h1>
                 <button onClick={()=> setIspopup(true)}>Cadastro de Funcionario</button>
                 <button>Cadastro de Alojamento</button>
                 <button>Cadastro de Veiculos</button>
                 <button>Cadastro de Garagem</button>
             </div>
 
-            <ModalFuncionario isOpen = {isPopup} onClose = {()=> setIspopup(false)}/>
+            <div className='modal_func'>
+                <ModalFuncionario isOpen = {isPopup} onClose = {()=> setIspopup(false)}/>
+           </div>
+            
                  
         </div>
     )

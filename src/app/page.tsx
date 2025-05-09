@@ -5,7 +5,6 @@ export default function Home() {
 
     <div>
       <Tela_gerenciamento/>
-
     </div>
     
     

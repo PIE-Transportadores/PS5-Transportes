@@ -1,0 +1,20 @@
+
+.conteudo_modal form{
+    display: flex;
+    flex-direction: column;
+    width: 650px;
+    height: 300px;
+    padding: 20px 20px 20px 20px;
+    gap: 1rem;
+    background-color: aqua;
+}
+
+.conteudo_modal form label{
+    text-align: center;
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.conteudo_modal{
+    border: solid rgb(0, 0, 0);
+}

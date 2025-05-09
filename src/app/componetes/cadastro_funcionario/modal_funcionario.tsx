@@ -1,5 +1,7 @@
 
 import Popup from "@/modal/modal_cadastro_funcionario/popup"
+import './conteudo_modal.css'
+import CriarFunc from "@/action/service/func-service";
 
 
 type ModalFuncionarioProps = {
@@ -10,18 +12,20 @@ export default function ModalFuncionario({ isOpen, onClose }:ModalFuncionarioPro
 
     
     return(
-        <div>
+        <div className="modal_func">
             
-            <Popup isOpen = {isOpen} onClose={onClose}>
-
-                <form action="#">
-                    <input type="text" placeholder="Nome Completo" />
-                    <input type="number" placeholder="CPF" />
-                    <input type="text" placeholder="Turno" />
-                    <input type="text" placeholder="Selecionar Alojamento" />
-                    <button type="submit">Salvar Funcionario</button>
-                </form>
-
+            <Popup isOpen = {isOpen} onClose={onClose} >
+                <div className="conteudo_modal">
+                    <form action={CriarFunc}>
+                        <label htmlFor="#">Cadastro de Funcionario</label>
+                        <input type="text" name="nome" placeholder="Nome Completo" />
+                        <input type="number" name="cpf" placeholder="CPF" />
+                        <input type="text" name = "turno" placeholder="Turno" />
+                        <input type="text" name = "alojamento" placeholder="Selecionar Alojamento" />
+                        <button type="submit">Salvar Funcionario</button>
+                    </form>
+                </div>
+               
             </Popup>
 
         </div>
