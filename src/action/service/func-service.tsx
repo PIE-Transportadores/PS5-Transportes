@@ -1,10 +1,7 @@
 'use server'
 import {prisma} from '@/lib/prisma'
 
-
-
-
-export default async function CriarFunc(formData:FormData){
+export default async function CriarFunc(prevState: any,formData:FormData){
 
     const nome = formData.get('nome') as string
     const cpf = Number(formData.get('cpf'))
@@ -20,4 +17,6 @@ export default async function CriarFunc(formData:FormData){
         },
     })
     console.log("FUNCIONARIO CRIADO")
+
+    return {sucesso:true}
 }

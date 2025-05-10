@@ -9,7 +9,7 @@ interface ModalFuncionario{
 }
 
 const Popup: React.FC<ModalFuncionario> = ({isOpen,onClose,children}) =>{
-    if (isOpen == false) return null
+    if (!isOpen) return null
 
     return(
         <div className="modal_func">
