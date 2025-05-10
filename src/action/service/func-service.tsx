@@ -17,6 +17,7 @@ export default async function CriarFunc(prevState: any,formData:FormData){
         },
     })
     console.log("FUNCIONARIO CRIADO")
+    console.log("opa")
 
     return {sucesso:true}
 }
