@@ -18,3 +18,21 @@
 .conteudo_modal{
     border: solid rgb(0, 0, 0);
 }
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group input {
+  display: block;
+  width: 100%;
+  padding: 1px;
+  font-size: 14px;
+}
+
+.erro {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: -6px;
+}
