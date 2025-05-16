@@ -70,7 +70,7 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
             <Popup isOpen = {isOpen} onClose={onClose}>
                 <div className="conteudo_modal">
                     <form  onSubmit={hendleSubmit}>
-                        <div className="form-group">
+                        <div className=" bg-amber-50" >
                             <input type="text" name="nome" placeholder="Nome Completo" />
                             {erros.nome && <p className="erro">{erros.nome}</p>}
                         </div>
