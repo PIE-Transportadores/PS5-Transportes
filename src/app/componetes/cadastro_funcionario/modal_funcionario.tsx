@@ -1,6 +1,6 @@
 'use client'
 import Popup from "@/modal/modal_cadastro_funcionario/popup"
-import './conteudo_modal.css'
+//import './conteudo_modal.css'
 import CriarFunc from "@/action/service/func-service";
 import React, { useActionState } from 'react'
 import { useEffect,useState,useTransition} from "react";
