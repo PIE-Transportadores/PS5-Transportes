@@ -1,34 +1,92 @@
-# 🚚 PS5 Transportes
+# PS5 Transportes
 
-![GitHub repo size](https://img.shields.io/github/repo-size/PIE-Transportadores/PS5-Transportes?style=for-the-badge)
-![GitHub license](https://img.shields.io/github/license/PIE-Transportadores/PS5-Transportes?style=for-the-badge)
+Sistema de gerenciamento de transportadoras.
 
-> Sistema de gerenciamento de transportadoras desenvolvido com Next.js, Prisma e PostgreSQL.
+---
 
-## 📋 Pré-requisitos
+## 🚀 Como executar o projeto
 
-Antes de começar, verifique se você possui:
-
-- Node.js v18+
-- npm ou Yarn
-- PostgreSQL ou MySQL
-- Git
-
-## 🚀 Como Executar o Projeto
+### 1. Clone o repositório
 
 ```bash
-# Clone o repositório
-git clone https://github.com/PIE-Transportadores/PS5-Transportes.git
+git clone https://github.com/PIE-Transportadores/PS5-Transportes
+```
+
+### 2. Acesse a pasta do projeto
+
+```bash
 cd PS5-Transportes
+```
 
-# Instale as dependências
+### 3. Instale as dependências do projeto
+
+```bash
 npm install
+```
 
-# Configure o arquivo .env (copie o .env.example)
-cp .env.example .env
+### 4. Crie o arquivo `.env` na raiz do projeto
 
-# Gere o cliente do Prisma
+Esse arquivo deve conter a chave de autenticação do banco de dados. Exemplo:
+
+```env
+DATABASE_URL="..."
+```
+#### Atenção o arquivo "env" deve ser renomeado para ".env"
+
+
+### 5. Instale as dependências do Prisma
+
+```bash
 npx prisma generate
+npm install @prisma/client
+npm install prisma --save-dev
+```
 
-# Execute o projeto
+### 6. Rode o projeto localmente em terminais diferentes
+
+**Terminal 1:**
+
+```bash
 npm run dev
+```
+
+**Terminal 2:**
+
+```bash
+npx prisma studio
+```
+
+---
+
+## 🧾 Tecnologias utilizadas
+
+- Node.js
+- Express
+- Prisma ORM
+- PostgreSQL
+
+---
+
+## 📂 Estrutura principal
+
+- `prisma/` — esquemas do banco de dados
+- `src/` — código-fonte da aplicação
+- `.env` — variáveis de ambiente
+- `package.json` — gerenciador de pacotes e scripts
+
+---
+
+## ✅ Comandos úteis
+
+| Comando                     | Descrição                                         |
+|----------------------------|---------------------------------------------------|
+| `npm install`              | Instala as dependências do projeto                |
+| `npm run dev`              | Executa o servidor em modo de desenvolvimento     |
+| `npx prisma generate`      | Gera o client do Prisma após alterações no schema |
+| `npx prisma studio`        | Abre o painel visual para visualizar o banco      |
+
+---
+
+## 📄 Licença
+
+Este projeto está sob licença MIT.
