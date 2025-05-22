@@ -31,3 +31,12 @@ model cadastro_alojamento{
   bairro String
   numero Int
 }
+
+model Usuario {
+  id    Int    @id @default(autoincrement())
+  nome  String
+  email String @unique
+  password String
+  sexo String
+  dataCriada DateTime
+}
