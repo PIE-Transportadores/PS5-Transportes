@@ -9,7 +9,7 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
     
     interface ErrosForm {
         nome?: string
-        localizacao?: string
+        bairro?: string
         rua?: string
         numero?: string
         cep?: string
@@ -23,7 +23,7 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
 
         const formData = new FormData(e.currentTarget)
         const nome = formData.get('nome')?.toString().trim() ?? ""
-        const localizacao = formData.get('localizacao')?.toString().trim() ?? ""
+        const bairro = formData.get('bairro')?.toString().trim() ?? ""
         const numero = formData.get('numero')?.toString().trim() ?? ""
         const cep = formData.get('cep')?.toString().trim() ?? ""
         const rua = formData.get('rua')?.toString().trim() ?? ""
@@ -31,7 +31,7 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
         const newErrors: ErrosForm = {}
 
         if (!nome) newErrors.nome = "Nome é obrigatório"
-        if (!localizacao) newErrors.localizacao = "Bairro é obrigatório"
+        if (!bairro) newErrors.bairro = "Bairro é obrigatório"
         if (!numero) newErrors.numero = "Capacidade é obrigatória"
         if (!cep) newErrors.cep = "CEP é obrigatório"
         if (!rua) newErrors.rua = "Rua é obrigatório"
@@ -70,10 +70,10 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
                         <div className="">
                             <input className=" bg-white m-px p-2.5 rounded-xs"
                                 type="text" 
-                                name="localizacao" 
+                                name="bairro" 
                                 placeholder="Bairro" 
                             />
-                            {erros.localizacao && <p className="erro">{erros.localizacao}</p>}
+                            {erros.bairro && <p className="erro">{erros.bairro}</p>}
                         </div>
                         <div>
                             <input className="bg-white m-px p-2.5 rounded-xs"
