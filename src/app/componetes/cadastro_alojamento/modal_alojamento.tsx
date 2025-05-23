@@ -1,6 +1,7 @@
 'use client'
 import Popup from "@/modal/modal_cadastro_alojamento/popup"
 import React, { useActionState } from 'react'
+import CriarAloj from"@/action/service/aloj-service";
 import { useEffect,useState,useTransition} from "react";
 
 export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
@@ -44,12 +45,7 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
 
         setErrors({})
 
-        // Simulação de envio (substituir por ação real depois)
-        setTimeout(() => {
-            alert("Alojamento cadastrado com sucesso (simulação)")
-            setIsPending(false)
-            onClose()
-        }, 1000)
+     
     }
 
     return (
@@ -77,7 +73,10 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
                         </div>
                         <div>
                             <input className="bg-white m-px p-2.5 rounded-xs"
-                            placeholder="Rua"/>
+                            placeholder="Rua"
+                            type="text"
+                            name="rua"/>
+                            
                         </div>
                         {erros.rua && <p className="erro">{erros.rua}</p>}
                         <div className="">
@@ -98,6 +97,7 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
                             maxLength={8}/>
                         </div>
                         {erros.cep && <p className="text-red-500">{erros.cep}</p>}
+                        
                         <button className="bg-orange-400 py-3 px-7 rounded-4xl" 
                             type="submit" 
                             disabled={isPending}
