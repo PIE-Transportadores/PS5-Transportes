@@ -17,7 +17,7 @@ datasource db {
 model cadastro_funcionario{
   id Int @id @default(autoincrement())
   nome String
-  cpf Int
+  cpf String
   turno String
   alojamento String
 }
@@ -39,4 +39,15 @@ model Usuario {
   password String
   sexo String
   dataCriada DateTime
+}
+
+model cadastro_veiculo{
+
+  id Int @id @default(autoincrement())
+  placa String
+  garagem String
+  marca String
+  ano Int
+  tipo String
+
 }

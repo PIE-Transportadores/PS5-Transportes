@@ -2,15 +2,18 @@
 import Popup from "@/modal/modal_cadastro_funcionario/popup"
 import './conteudo_modal.css'
 import CriarFunc from "@/action/service/func-service";
-import React, { useActionState } from 'react'
+import React, { use, useActionState } from 'react'
 import { useEffect,useState,useTransition} from "react";
+import Viws_func from "@/app/tela_gerenciamento/Gerenciamento-funcionario/page";
 
 const inicializarForm = {sucesso: false}
 
-export default function ModalFuncionario({ isOpen, onClose }:any){
+export default function ModalFuncionario({ isOpen, onClose,reabrirlista }:any){
 
     const [state,formAction] = useActionState(CriarFunc,inicializarForm)
     const [isPending, startTransition] = useTransition()
+    const [cpf, setCpf] = useState("")
+    const [viws_f,setViws_f] = useState(false)
 
     interface ErrosForm {
             nome?: string
@@ -37,8 +40,11 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
 
             
 
+            
+
             const formData = new FormData(e.currentTarget)
             const nome = formData.get('nome')?.toString().trim() ?? ""
+            const cpf = formData.get('cpf')?.toString().replace(/\D/g, '') ?? ""
             const turno = formData.get('turno')?.toString().trim() ?? ""
             const alojamento = formData.get('alojamento')?.valueOf() ?? ""
 
@@ -47,6 +53,10 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
            if (!nome) newErrors.nome = "Nome é obrigatorio"
            if(!turno) newErrors.turno = "Turno é obrigatorio"
            if(!alojamento) newErrors.alojamento = "Alojamento é obrigatorio" 
+
+           if (!cpf) {
+                newErrors.cpf = "CPF é obrigatório"
+            } 
 
            if(Object.keys(newErrors).length > 0){
             setErrors(newErrors)
@@ -62,6 +72,16 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
            
         }
 
+        function formatarCPF(valor: string) {
+        return valor
+            .replace(/\D/g, "") 
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d)/, "$1.$2")
+            .replace(/(\d{3})(\d{1,2})$/, "$1-$2")
+            .slice(0, 14) 
+        }
+
+
         
     
     return(
@@ -71,7 +91,14 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
                 <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-[700px] h-[550px]">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-semibold">Cadastrar Funcionário</h2>
-                        <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">×</button>
+                        <button onClick={()=>{
+                            onClose()
+                            reabrirlista()
+                        }} 
+                        className="text-gray-400 hover:text-white text-xl"
+                        >
+                            ×
+                        </button>
                     </div>
 
                     <form onSubmit={hendleSubmit} className="space-y-4">
@@ -89,9 +116,11 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
                     <div>
                         <label className="block text-sm mb-1">CPF</label>
                         <input
-                        type="number"
+                        type="text"
                         name="cpf"
+                        value={cpf}
                         placeholder="Digite o CPF"
+                        onChange={(e)=> setCpf(formatarCPF(e.target.value))}
                         className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {erros.cpf && <p className="text-red-400 text-sm mt-1">{erros.cpf}</p>}
@@ -129,6 +158,12 @@ export default function ModalFuncionario({ isOpen, onClose }:any){
                         type="submit"
                         disabled={isPending}
                         className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition"
+                        onClick={()=>{
+                            setTimeout(()=>{
+                                reabrirlista()
+                            },2000)
+                            
+                        }}
                     >
                         {isPending ? 'Salvando...' : '+ Adicionar novo funcionário'}
                     </button>

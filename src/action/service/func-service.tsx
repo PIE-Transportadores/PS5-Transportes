@@ -4,7 +4,7 @@ import {prisma} from '@/lib/prisma'
 export default async function CriarFunc(prevState: any,formData:FormData){
 
     const nome = formData.get('nome') as string
-    const cpf = Number(formData.get('cpf'))
+    const cpf = formData.get('cpf') as string
     const turno = formData.get('turno') as string
     const alojamento = formData.get('alojamento') as string
 
