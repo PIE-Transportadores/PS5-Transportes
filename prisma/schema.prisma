@@ -22,12 +22,11 @@ model cadastro_funcionario{
   alojamento String
 }
 
-model Alojamento {
+model cadastro_alojamento {
   id        Int      @id @default(autoincrement())
-  nome      String
+  alojamento  String
   rua       String
   bairro    String
   numero    Int
-  cep       String
-  createdAt DateTime @default(now())
+  cep       Int
 }

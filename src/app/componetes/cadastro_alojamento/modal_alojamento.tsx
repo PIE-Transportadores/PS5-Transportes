@@ -4,9 +4,13 @@ import React, { useActionState } from 'react'
 import CriarAloj from"@/action/service/aloj-service";
 import { useEffect,useState,useTransition} from "react";
 
+const inicializarForm = {sucesso: false}
+
 export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
 
-    const [isPending, setIsPending] = useState(false)
+    //const [isPending, setIsPending] = useState(false)
+    const [state,formAction] = useActionState(CriarAloj, inicializarForm)
+    const [isPending, startTransition] = useTransition()
     
     interface ErrosForm {
         nome?: string
@@ -18,9 +22,18 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
     
     const [erros, setErrors] = useState<ErrosForm>({})
 
+      useEffect(()=>{
+                if (state.sucesso == true && isOpen == true){
+                    onClose()
+                    
+                }else{
+                    state.sucesso = false
+                }
+    
+            },[state.sucesso,onClose])
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setIsPending(true)
 
         const formData = new FormData(e.currentTarget)
         const nome = formData.get('nome')?.toString().trim() ?? ""
@@ -29,7 +42,7 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
         const cep = formData.get('cep')?.toString().trim() ?? ""
         const rua = formData.get('rua')?.toString().trim() ?? ""
 
-        const newErrors: ErrosForm = {}
+        const newErrors: ErrosForm = ({})
 
         if (!nome) newErrors.nome = "Nome é obrigatório"
         if (!bairro) newErrors.bairro = "Bairro é obrigatório"
@@ -39,13 +52,15 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors)
-            setIsPending(false)
             return
         }
 
         setErrors({})
 
-     
+          startTransition(()=>{
+            formAction(formData)
+            alert("Formulario Enviado")
+           })
     }
 
     return (
