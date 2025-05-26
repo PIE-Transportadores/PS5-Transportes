@@ -72,6 +72,8 @@ export default function ModalFuncionario({ isOpen, onClose,reabrirlista }:any){
            
         }
 
+
+        // Função para formatar o CPF
         function formatarCPF(valor: string) {
         return valor
             .replace(/\D/g, "") 

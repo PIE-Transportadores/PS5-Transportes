@@ -21,26 +21,43 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
 
     useEffect(() => {
     setIsOpen_func1(isOpen_func)
-  }, [isOpen_func])
 
+    }, [isOpen_func])
+
+    
+    async function BuscarFuncionario(){
+
+        const res = await fetch("/api/funcionarios")
+        const data = await res.json()
+        setFuncionarios(data)
+        console.log("Dados recebidos:", data)
+
+    }
+        
     useEffect(()=>{
-        async function BuscarFuncionario(){
+      BuscarFuncionario()
 
-            const res = await fetch("/api/funcionarios")
-            const data = await res.json()
-            setFuncionarios(data)
-
-        }
-        BuscarFuncionario()
     },[])
 
     // Função para deletar um funcionario 
 
     const delete_funcionario = async(id: number)=>{
+
+
+      const confirmado = window.confirm("Tem certeza que deseja excluir este funcionário?");
+
+      if (!confirmado) return;
+
       
-      await fetch(`/api/funcionarios/${id}`,{
+      const res =  await fetch(`/api/funcionarios/${id}`,{
         method:"DELETE"
       })
+
+      
+      BuscarFuncionario()
+      
+
+     
       
     }
   
@@ -50,17 +67,43 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
       <Popup_func isOpen_func = {isOpen_func1} onClose_func = {()=> setIsOpen_func1(false) }>
         <div className="overflow-y-auto max-h-[700px] rounded-lg">
           <div className="flex justify-between items-center mb-6">
-             <h1 className="text-2xl font-bold text-white mb-6">Funcionários Cadastrados</h1>
+            <h1 className="text-2xl font-bold text-white mb-6">Funcionários Cadastrados</h1>
+            <div className="flex items-center gap-10">
+              <button
 
-            <button
-              onClick={() => {
-                setIspopup(true)
-                setIsOpen_func1(false)
-              }}
-              className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
-            >
-              + Cadastrar
-            </button>
+                onClick={BuscarFuncionario}
+              
+              >
+                <svg 
+                  className="w-[45px] h-[45px] text-gray-800 dark:text-white" 
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24" height="24" fill="none" 
+                  viewBox="0 0 24 24"
+                  >
+                  <path 
+                    stroke="currentColor"
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3M3.22302 14C4.13247 18.008 7.71683 21 12 21c4.9706 0 9-4.0294 9-9 0-4.97056-4.0294-9-9-9-3.72916 0-6.92858 2.26806-8.29409 5.5M7 9H3V5"/>
+                </svg>
+                
+
+              </button>
+
+              <button
+                onClick={() => {
+                  setIspopup(true)
+                  setIsOpen_func1(false)
+                }}
+                className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
+              >
+                + Cadastrar
+              </button>
+
+            </div>
+            
             
           </div>
       
