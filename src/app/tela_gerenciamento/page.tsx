@@ -35,7 +35,6 @@ export default  function Tela_gerenciamento(){
             <button 
                 className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition"
                 onClick={() => setIsVeiculosPopUp(true)}
-            
             >
                 Cadastro de Veículos
             </button>
@@ -50,9 +49,13 @@ export default  function Tela_gerenciamento(){
         
         
           
-        
+        <div className="w-full max-w-7xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md">
+            <Viws_func isOpen_func = {isOpen_func} onClose_func = {()=> setIsopen(false)}/>   
+        </div>
+
         <div className="w-full max-w-7xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md">
             <ModalVeiculos isOpen={isVeiculosPopUp} onClose={() => setIsVeiculosPopUp(false)}/>
+
         </div>
         
     </div>
