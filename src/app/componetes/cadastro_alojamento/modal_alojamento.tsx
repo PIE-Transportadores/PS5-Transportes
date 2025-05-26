@@ -66,54 +66,63 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
     return (
         <div className="modal_aloj">
             <Popup isOpen={isOpen} onClose={onClose}>
-                <div className="w-120 h-120 bg-sky-900">
-                    <h2 className="font-sans text-white">Cadastro de Alojamento</h2>
+                <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-[700px] h-[auto]">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="font-sans text-white">Cadastro de Alojamento</h2>
+                        <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">×</button>
+                    </div>
+                    
                     <form onSubmit={handleSubmit}>
                         <div className="">
-                            <input className=" bg-white m-px p-2.5 rounded-xs"
+                            <label className="block text-sm mb-1">Nome</label>
+                            <input className=" w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 type="text" 
                                 name="nome" 
                                 placeholder="Alojamento" 
                             />
-                            {erros.nome && <p className="erro">{erros.nome}</p>}
+                            {erros.nome && <p className="text-red-400 text-sm mt-1">{erros.nome}</p>}
                         </div>
 
                         <div className="">
-                            <input className=" bg-white m-px p-2.5 rounded-xs"
+                            <label className="block text-sm mb-1">Bairro</label>
+                            <input className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 type="text" 
                                 name="bairro" 
                                 placeholder="Bairro" 
                             />
-                            {erros.bairro && <p className="erro">{erros.bairro}</p>}
+                            {erros.bairro && <p className="text-red-400 text-sm mt-1">{erros.bairro}</p>}
                         </div>
                         <div>
-                            <input className="bg-white m-px p-2.5 rounded-xs"
+                            <label className="block text-sm mb-1">Rua</label>
+                            <input className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Rua"
                             type="text"
                             name="rua"/>
                             
                         </div>
-                        {erros.rua && <p className="erro">{erros.rua}</p>}
+                        {erros.rua && <p className="text-red-400 text-sm mt-1">{erros.rua}</p>}
                         <div className="">
-                            <input className=" bg-white m-px p-2.5 rounded-xs"
+                            <label className="block text-sm mb-1">Numero:</label>
+                            <input className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 type="number" 
                                 name="numero" 
                                 placeholder="Numero" 
                                 min="1"
                             />
-                            {erros.numero && <p className="erro">{erros.numero}</p>}
+                            {erros.numero && <p className="text-red-400 text-sm mt-1">{erros.numero}</p>}
                         </div>
                          <div>
-                            <input className="bg-white m-px p-2.5 rounded-xs"
+                            <label className="block text-sm mb-1">CEP:</label>
+                            <input className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3.5"
                             placeholder="CEP"
                             name="cep"
                             type="text"
                             inputMode="numeric"
                             maxLength={8}/>
                         </div>
-                        {erros.cep && <p className="text-red-500">{erros.cep}</p>}
+                        {erros.cep && <p className="text-red-400 text-sm mt-1">{erros.cep}</p>}
                         
-                        <button className="bg-orange-400 py-3 px-7 rounded-4xl" 
+                        <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition" 
                             type="submit" 
                             disabled={isPending}
                         >
