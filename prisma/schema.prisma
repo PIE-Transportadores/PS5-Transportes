@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -32,7 +32,7 @@ model cadastro_alojamento{
   numero Int
 }
 
-model Usuario {
+model usuario {
   id    Int    @id @default(autoincrement())
   nome  String
   email String @unique
@@ -50,4 +50,23 @@ model cadastro_veiculo{
   ano Int
   tipo String
 
+}
+
+model cadastro_destino{
+  id Int @id @default(autoincrement())
+  destino String
+  rua String
+  bairro String
+  numero Int
+  cep String
+
+}
+
+model cadastro_garagem {
+  id  Int @id @default(autoincrement())
+  garagem String
+  rua String 
+  bairro  String 
+  numero  Int
+  cep String 
 }

@@ -1,19 +1,19 @@
 
 'use client'
-import './gerente.css'
-
 import { useState } from 'react'
-
-
 import Viws_func from './Gerenciamento-funcionario/page'
 import ModalVeiculos from '../componetes/cadastro_veiculos/modal_veiculos'
+import ModalAlojamento from '../componetes/cadastro_alojamento/modal_alojamento'
+import ModalGaragem from '../componetes/cadastro_garagem/modal_garagem'
 
 export default  function Tela_gerenciamento(){
 
     
     const [isOpen_func,setIsopen] = useState(false)
     const [isVeiculosPopUp, setIsVeiculosPopUp] = useState(false);
-    console.log("O valor da 1ª pagina é ",isOpen_func)
+    const [isAlojPopup, setIsAlojPopup] = useState(false);
+    const [isGaragemPopup, setIsGaragemPopup] = useState(false);
+    
 
     
     return (
@@ -28,8 +28,12 @@ export default  function Tela_gerenciamento(){
                 Funcionário
             </button>
 
-            <button className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition">
+            <button 
+                className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition"
+                onClick={() => setIsAlojPopup(true)}
+            >
                 Cadastro de Alojamento
+
             </button>
 
             <button 
@@ -39,7 +43,10 @@ export default  function Tela_gerenciamento(){
                 Cadastro de Veículos
             </button>
 
-            <button className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition">
+            <button 
+                className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition"
+                onClick={()=>{setIsGaragemPopup(true)}}
+            >
                 Cadastro de Garagem
             </button>
             <button className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition">
@@ -50,13 +57,16 @@ export default  function Tela_gerenciamento(){
         
           
         <div className="w-full max-w-7xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md">
-            <Viws_func isOpen_func = {isOpen_func} onClose_func = {()=> setIsopen(false)}/>   
+            <Viws_func isOpen_func = {isOpen_func} onClose_func = {()=> setIsopen(false)}/>
+            <div className='flex-1 flex items-center justify-center relative'>
+                <ModalVeiculos isOpen={isVeiculosPopUp} onClose={() => setIsVeiculosPopUp(false)}/>   
+                <ModalAlojamento isOpen={isAlojPopup} onClose={() => setIsAlojPopup(false)}/>
+                <ModalGaragem isOpen={isGaragemPopup} onClose={() => setIsGaragemPopup(false)}/>
+            </div>
+            
         </div>
 
-        <div className="w-full max-w-7xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md">
-            <ModalVeiculos isOpen={isVeiculosPopUp} onClose={() => setIsVeiculosPopUp(false)}/>
-
-        </div>
+        
         
     </div>
     );

@@ -2,6 +2,8 @@
 import { useEffect,useState } from "react"
 import Popup_func from "./pop-func"
 import ModalFuncionario from "@/app/componetes/cadastro_funcionario/modal_funcionario"
+import Form_Func_Edit from "./Form_Func_Edit"
+import { buscarFuncionarios } from "@/app/api/funcionarios/utils/BuscarFuncionario"
 
 
 interface Funcionario{
@@ -17,6 +19,8 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
     const [funcionarios,setFuncionarios] = useState<Funcionario[]>([])
     const [isPopup,setIspopup] = useState(false)
     const [isOpen_func1, setIsOpen_func1] = useState(isOpen_func)
+    const [idEdicao, setIdEdicao] = useState<number | null>(null)
+    const [mostrarEditar, setMostrarEditar] = useState(false)
     console.log("O valor da 2º Pagina é", isOpen_func1)
 
     useEffect(() => {
@@ -25,17 +29,15 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
     }, [isOpen_func])
 
     
-    async function BuscarFuncionario(){
+    async function carregar(){
 
-        const res = await fetch("/api/funcionarios")
-        const data = await res.json()
-        setFuncionarios(data)
-        console.log("Dados recebidos:", data)
+      const data = await buscarFuncionarios()
+      setFuncionarios(data)
 
     }
         
     useEffect(()=>{
-      BuscarFuncionario()
+      carregar()
 
     },[])
 
@@ -54,14 +56,14 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
       })
 
       
-      BuscarFuncionario()
+      carregar()
       
 
      
       
     }
   
-   return (
+  return (
 
     <div>
       <Popup_func isOpen_func = {isOpen_func1} onClose_func = {()=> setIsOpen_func1(false) }>
@@ -71,7 +73,7 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
             <div className="flex items-center gap-10">
               <button
 
-                onClick={BuscarFuncionario}
+                onClick={carregar}
               
               >
                 <svg 
@@ -85,7 +87,7 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
                     stroke="currentColor"
                     strokeLinecap="round" 
                     strokeLinejoin="round"
-                    stroke-width="2"
+                    strokeWidth="2"
                     d="M12 8v4l3 3M3.22302 14C4.13247 18.008 7.71683 21 12 21c4.9706 0 9-4.0294 9-9 0-4.97056-4.0294-9-9-9-3.72916 0-6.92858 2.26806-8.29409 5.5M7 9H3V5"/>
                 </svg>
                 
@@ -100,6 +102,13 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
                 className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
               >
                 + Cadastrar
+              </button>
+              
+              <button 
+                className="text-gray-400 hover:text-white text-xl"
+                onClick={()=>{onClose_func()}}
+              >
+                ×
               </button>
 
             </div>
@@ -127,7 +136,16 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
                     <td className="px-6 py-4">{func.turno}</td>
                     <td className="px-6 py-4">{func.alojamento}</td>
                     <td className="px-3 py-4">
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">Editar</button>
+                      <button 
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"
+                        onClick={()=>{
+                          setIdEdicao(func.id)
+                          setMostrarEditar(true)
+                          setIsOpen_func1(false)
+                        }}
+                      >
+                        Editar
+                      </button>
                     </td>
                     <td className="px-3 py-4">
                       <button 
@@ -148,12 +166,24 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
       </Popup_func>  
 
       <div className="flex-1 flex items-center justify-center relative">
-          <ModalFuncionario 
-            isOpen={isPopup} 
-            onClose={() => setIspopup(false)} 
+        <ModalFuncionario 
+          isOpen={isPopup} 
+          onClose={() => setIspopup(false)} 
+          reabrirlista = {()=>setIsOpen_func1(true)}
+          />
+      </div>
+
+      <div className="flex-1 flex items-center justify-center relative">
+        {idEdicao !== null && (
+          <Form_Func_Edit
+            id={idEdicao}
+            isOpen={mostrarEditar}
+            onClose={() => setMostrarEditar(false)}
             reabrirlista = {()=>setIsOpen_func1(true)}
-            />
-        </div>
+          />
+        )}
+      </div>
+
     </div>
    
   )

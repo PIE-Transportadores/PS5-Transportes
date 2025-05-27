@@ -1,5 +1,4 @@
 
-import './cadastro_fun.css'
 
 interface ModalFuncionario{
     isOpen: boolean,

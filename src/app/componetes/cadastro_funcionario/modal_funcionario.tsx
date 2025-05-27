@@ -1,10 +1,9 @@
 'use client'
 import Popup from "@/modal/modal_cadastro_funcionario/popup"
-import './conteudo_modal.css'
 import CriarFunc from "@/action/service/func-service";
 import React, { use, useActionState } from 'react'
 import { useEffect,useState,useTransition} from "react";
-import Viws_func from "@/app/tela_gerenciamento/Gerenciamento-funcionario/page";
+
 
 const inicializarForm = {sucesso: false}
 
