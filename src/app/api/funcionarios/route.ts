@@ -7,7 +7,7 @@ export async function GET() {
 
         const funcionario = await prisma.cadastro_funcionario.findMany()
 
-        console.log("GET /api/funcionarios chamado ✅")
+        
         return NextResponse.json(funcionario)
         
         

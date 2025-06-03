@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Popup_func_editar } from "./pop-func";
 import { buscarFuncionarios } from "@/app/api/funcionarios/utils/BuscarFuncionario";
+import BuscarAlojamento from "@/app/api/funcionarios/utils/BuscarAlojamento";
 
 interface Props {
   id: number
@@ -9,10 +10,23 @@ interface Props {
   reabrirlista: () => void
 }
 
+
+
 export default function Form_Func_Edit({id,isOpen,onClose , reabrirlista}:Props){
+
+    type Alojamento = {
+        id: number;
+        alojamento:string;
+        cep: string;
+        rua:string;
+        bairro: string;
+        numero:string
+    }
 
     const [isPending, setIsPending] = useState(false)
     const [dados,setDados] = useState ({})
+    const [aloj,setAloj] = useState<Alojamento[]>([])
+
 
 
     const [form,setForm] = useState({
@@ -37,9 +51,17 @@ export default function Form_Func_Edit({id,isOpen,onClose , reabrirlista}:Props)
       setDados(data)
     }
 
+    async function carregarAlojamento() {
+        const data = await BuscarAlojamento()
+        setAloj(data)
+
+        
+    }
+
     useEffect(()=>{
 
         carregar()
+        carregarAlojamento()
 
     },[])
 
@@ -120,18 +142,28 @@ export default function Form_Func_Edit({id,isOpen,onClose , reabrirlista}:Props)
 
                     <div>
                         <label className="block text-sm mb-1">Alojamento</label>
-                        <select
-                        name="alojamento"
-                        value={form.alojamento}
-                        onChange={handleChange}
-                        className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                        <option value="">Selecione o alojamento</option>
-                        <option value="Alojamento 1">Alojamento 1</option>
-                        <option value="Alojamento 2">Alojamento 2</option>
-                        <option value="Alojamento 3">Alojamento 3</option>
-                        </select>
+
                         
+                            <select 
+                                name="alojamento"
+                                value={form.alojamento}
+                                onChange={handleChange}
+                                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                {aloj.map((aloj1)=>(
+
+                                    <option 
+                                    value={aloj1.alojamento} 
+                                    key={aloj1.id}
+                                    >
+                                    {aloj1.alojamento}
+                                    </option>
+
+                                ))}
+                                
+                            </select>
+
+                                         
                     </div>
 
                     <button
