@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PS5 Transportes
 
-## Getting Started
+Sistema de gerenciamento de transportadoras.
 
-First, run the development server:
+---
+
+## 🚀 Como executar o projeto
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/PIE-Transportadores/PS5-Transportes
+```
+
+### 2. Acesse a pasta do projeto
+
+```bash
+cd PS5-Transportes
+```
+
+### 3. Instale as dependências do projeto
+
+```bash
+npm install
+```
+
+### 4. Crie o arquivo `.env` na raiz do projeto
+
+Esse arquivo deve conter a chave de autenticação do banco de dados. Exemplo:
+
+```env
+DATABASE_URL="..."
+```
+#### Atenção o arquivo "env" deve ser renomeado para ".env"
+
+
+### 5. Instale as dependências do Prisma
+
+```bash
+npx prisma generate
+npm install @prisma/client
+npm install prisma --save-dev
+```
+
+### 6. Rode o projeto localmente em terminais diferentes
+
+**Terminal 1:**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Terminal 2:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npx prisma studio
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🧾 Tecnologias utilizadas
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js
+- Express
+- Prisma ORM
+- PostgreSQL
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📂 Estrutura principal
 
-## Deploy on Vercel
+- `prisma/` — esquemas do banco de dados
+- `src/` — código-fonte da aplicação
+- `.env` — variáveis de ambiente
+- `package.json` — gerenciador de pacotes e scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ✅ Comandos úteis
+
+| Comando                     | Descrição                                         |
+|----------------------------|---------------------------------------------------|
+| `npm install`              | Instala as dependências do projeto                |
+| `npm run dev`              | Executa o servidor em modo de desenvolvimento     |
+| `npx prisma generate`      | Gera o client do Prisma após alterações no schema |
+| `npx prisma studio`        | Abre o painel visual para visualizar o banco      |
+
+---
+
+## 📄 Licença
+
+Este projeto está sob licença MIT.
