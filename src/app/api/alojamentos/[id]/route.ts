@@ -3,17 +3,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// O 'context' contém os parâmetros da rota
+// Define um tipo para o contexto da rota para reutilização
 type RouteContext = {
     params: {
         id: string;
     };
 };
 
-// CORREÇÃO na assinatura da função GET
+// Função GET (Busca um)
 export async function GET(request: Request, context: RouteContext) {
     try {
-        const id = parseInt(context.params.id, 10); // Usando context.params.id
+        const id = parseInt(context.params.id, 10);
         if (isNaN(id)) {
             return new NextResponse('ID inválido', { status: 400 });
         }
@@ -33,10 +33,13 @@ export async function GET(request: Request, context: RouteContext) {
     }
 }
 
-// CORREÇÃO na assinatura da função DELETE
+// ==================================================================
+// CORREÇÃO NA FUNÇÃO DELETE
+// A assinatura precisa ter 'request' e 'context', nesta ordem.
+// ==================================================================
 export async function DELETE(request: Request, context: RouteContext) {
     try {
-        const id = parseInt(context.params.id, 10); // Usando context.params.id
+        const id = parseInt(context.params.id, 10);
         if (isNaN(id)) {
             return new NextResponse('ID inválido', { status: 400 });
         }
@@ -45,17 +48,17 @@ export async function DELETE(request: Request, context: RouteContext) {
             where: { id },
         });
 
-        return new NextResponse(null, { status: 204 });
+        return new NextResponse(null, { status: 204 }); // Sucesso, sem conteúdo
     } catch (error) {
         console.error("Erro ao deletar alojamento:", error);
         return new NextResponse('Erro interno do servidor', { status: 500 });
     }
 }
 
-// CORREÇÃO na assinatura da função PUT
+// Função PUT (Atualiza um)
 export async function PUT(request: Request, context: RouteContext) {
     try {
-        const id = parseInt(context.params.id, 10); // Usando context.params.id
+        const id = parseInt(context.params.id, 10);
         if (isNaN(id)) {
             return new NextResponse('ID inválido', { status: 400 });
         }

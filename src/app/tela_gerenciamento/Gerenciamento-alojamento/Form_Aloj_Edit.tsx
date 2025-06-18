@@ -7,7 +7,7 @@ interface Props {
   id: number
   isOpen: boolean
   onClose: () => void
-  reabrirlista: () => void
+  //reabrirlista: () => void
 }
 
 interface AlojamentoForm {
@@ -18,7 +18,7 @@ interface AlojamentoForm {
     cep: string | number;
 }
 
-export default function Form_Aloj_Edit({ id, isOpen, onClose, reabrirlista }: Props) {
+export default function Form_Aloj_Edit({ id, isOpen, onClose}: Props) {
     const [isPending, setIsPending] = useState(false);
     const [form, setForm] = useState<AlojamentoForm>({
         nome: "",
@@ -89,7 +89,7 @@ export default function Form_Aloj_Edit({ id, isOpen, onClose, reabrirlista }: Pr
             <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-[700px] h-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold">Editar Alojamento</h2>
-                    <button onClick={() => { onClose(); reabrirlista(); }} className="text-gray-400 hover:text-white text-xl">×</button>
+                    <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">×</button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -119,9 +119,14 @@ export default function Form_Aloj_Edit({ id, isOpen, onClose, reabrirlista }: Pr
                         <input type="number" name="cep" value={form.cep} onChange={handleChange} className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
-                    <button type="submit" disabled={isPending} onClick={() => setTimeout(() => reabrirlista(), 1300)} className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition">
-                        {isPending ? "Salvando..." : "Salvar Alterações"}
-                    </button>
+    <button
+    type="submit"
+    disabled={isPending}
+    // O onClick foi totalmente removido.
+    className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition"
+>
+    {isPending ? "Salvando..." : "Salvar Alterações"}
+</button>
                 </form>
             </div>
         </Popup_func_editar>
