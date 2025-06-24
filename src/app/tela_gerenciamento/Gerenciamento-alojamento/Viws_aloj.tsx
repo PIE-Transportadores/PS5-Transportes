@@ -77,11 +77,6 @@ export default function Viws_aloj({ isOpen_aloj, onClose_aloj }: any) {
             <Popup_func isOpen_func={isOpen_aloj} onClose_func={onClose_aloj}>
                 {/* O conteúdo abaixo será centralizado pelo Popup_func */}
                 <div className="flex flex-col items-center justify-center w-full h-full">
-
-                    {/* ================================================================= */}
-                    {/* A MUDANÇA PRINCIPAL ESTÁ AQUI                                    */}
-                    {/* A lista só será exibida se NENHUM modal estiver aberto.          */}
-                    {/* ================================================================= */}
                     {!isPopupCadastro && !mostrarEditar && (
                         <div className="w-full max-w-4xl rounded-lg p-6 bg-gray-900">
                             <div className="flex justify-between items-center mb-6">
