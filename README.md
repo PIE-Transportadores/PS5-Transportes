@@ -41,6 +41,12 @@ npx prisma generate
 npm install @prisma/client
 npm install prisma --save-dev
 ```
+### 5.1 Crie um banco de dados chamado "pie" no phpmyadmin
+
+### 5.2 Crie as tabelas no banco de dados usando o seguinte comando
+```bash
+npx prisma db push
+```
 
 ### 6. Rode o projeto localmente em terminais diferentes
 
@@ -50,13 +56,6 @@ npm install prisma --save-dev
 npm run dev
 ```
 
-**Terminal 2:**
-
-```bash
-npx prisma studio
-```
-
----
 
 ## 🧾 Tecnologias utilizadas
 
