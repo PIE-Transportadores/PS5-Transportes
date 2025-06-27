@@ -8,7 +8,7 @@ export default function Home() {
   return (
 
     <div>
-      <MapaPage/>
+      <Tela_gerenciamento/>
     </div>
     
     
