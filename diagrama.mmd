@@ -1,0 +1,71 @@
+erDiagram
+    ALOJAMENTO {
+        INT Id PK
+        VARCHAR Nome
+        VARCHAR Bairro
+        INT capacidade
+        INT Número
+        VARCHAR Cep
+    }
+
+    TIPO_VEICULO {
+        INT Id PK
+        VARCHAR Nome
+    }
+
+    GARAGEM {
+        INT Id PK
+        VARCHAR Nome
+        VARCHAR Rua
+        VARCHAR Bairro
+        INT Número
+        VARCHAR Cep
+    }
+
+    VEICULO {
+        INT Id PK
+        VARCHAR Placa
+        INT Tipo_id FK
+        INT Garagem_id FK
+        INT Ano
+        INT Capacidade
+    }
+
+    FUNCIONARIO {
+        INT Id PK
+        VARCHAR Nome
+        VARCHAR Cpf
+        INT Alojamento_id FK
+    }
+
+    DESTINO {
+        INT Id PK
+        VARCHAR Nome
+        VARCHAR Rua
+        VARCHAR Bairro
+        INT Número
+        VARCHAR Cep
+    }
+
+    SERVICO {
+        INT ID_OS
+        VARCHAR Nome
+        DATE Data_inicio
+        DATE Data_termino
+        INT Destino_id FK
+    }
+
+    OS_FUNCIONARIO{
+        INT SERVICO_ID FK
+        INT FUNCIONARIO_ID FK
+    }
+
+    %% Relacionamentos
+    VEICULO }o--|| TIPO_VEICULO : "tipo"
+    VEICULO }o--|| GARAGEM : "garagem"
+
+    FUNCIONARIO }o--|| ALOJAMENTO : "alojado em"
+
+    SERVICO }o--|| DESTINO : ""
+    OS_FUNCIONARIO }o--|| FUNCIONARIO : ""
+    SERVICO}o-- || OS_FUNCIONARIO : ""

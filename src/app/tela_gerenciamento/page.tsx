@@ -2,6 +2,7 @@
 'use client'
 import { useState } from 'react'
 import Viws_func from './Gerenciamento-funcionario/page'
+import Viws_garagem from './Gerenciamento-garagem/page'
 import ModalVeiculos from '../componetes/cadastro_veiculos/modal_veiculos'
 import ModalAlojamento from '../componetes/cadastro_alojamento/modal_alojamento'
 import ModalGaragem from '../componetes/cadastro_garagem/modal_garagem'
@@ -58,10 +59,11 @@ export default  function Tela_gerenciamento(){
           
         <div className="w-full max-w-7xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md">
             <Viws_func isOpen_func = {isOpen_func} onClose_func = {()=> setIsopen(false)}/>
+            <Viws_garagem isOpen_garagem={isGaragemPopup} onClose_garagem={() => setIsGaragemPopup(false)} />
+
             <div className='flex-1 flex items-center justify-center relative'>
                 <ModalVeiculos isOpen={isVeiculosPopUp} onClose={() => setIsVeiculosPopUp(false)}/>   
                 <ModalAlojamento isOpen={isAlojPopup} onClose={() => setIsAlojPopup(false)}/>
-                <ModalGaragem isOpen={isGaragemPopup} onClose={() => setIsGaragemPopup(false)}/>
             </div>
             
         </div>
