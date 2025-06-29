@@ -70,3 +70,11 @@ model cadastro_garagem {
   numero  Int
   cep String 
 }
+
+model cadastro_servico{
+  id Int @id @default(autoincrement())
+  servico String
+  destino String
+  dataInicio DateTime
+  dataFim DateTime
+}

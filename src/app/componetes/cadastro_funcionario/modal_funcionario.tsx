@@ -162,10 +162,10 @@ export default function ModalFuncionario({ isOpen, onClose,reabrirlista }:any){
                         name="turno"
                         className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                        <option value="">Selecione o turno</option>
-                        <option value="1° Turno">1° Turno</option>
-                        <option value="2° Turno">2° Turno</option>
-                        <option value="3° Turno">3° Turno</option>
+                            <option value="">Selecione o turno</option>
+                            <option value="1° Turno">1° Turno</option>
+                            <option value="2° Turno">2° Turno</option>
+                            <option value="3° Turno">3° Turno</option>
                         </select>
                         {erros.turno && <p className="text-red-400 text-sm mt-1">{erros.turno}</p>}
                     </div>
