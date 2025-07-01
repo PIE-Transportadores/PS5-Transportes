@@ -3,6 +3,7 @@ import Popup from "@/modal/modal_cadastro_servico/popup"
 import CriarServico from "@/action/service/servico-service"
 import React, { useActionState, useEffect, useState, useTransition } from 'react'
 import { buscarFuncionarios } from "@/app/api/funcionarios/utils/BuscarFuncionario"
+import Select from 'react-select'
 
 
 const inicializarForm = { sucesso: false }
@@ -63,6 +64,33 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
     })
   }
 
+  const customStyles = {
+    option: (provided: any, state: any) => ({
+      ...provided,
+      color: 'white',
+      backgroundColor: state.isSelected ? '#2563eb' : '#1f2937', // Azul ou cinza escuro
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: '#1f2937', // Cor do menu suspenso
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      backgroundColor: '#1f2937',
+      borderColor: '#4b5563',
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: '#2563eb',
+    }),
+    multiValueLabel: (provided: any) => ({
+      ...provided,
+      color: 'black',
+    }),
+  }
+
+  
   return (
     <div className="modal_servico">
       <Popup isOpen={isOpen} onClose={onClose}>
@@ -130,17 +158,14 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
 
             <div>
               <label className="block text-sm mb-1">Funcionários</label>
-              <select
-                name="funcionarios"
-                multiple
-                className="w-full h-[100px] p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {funcionarios.map((func) => (
-                  <option key={func.id} value={func.id}>
-                    {func.nome}
-                  </option>
-                ))}
-              </select>
+             
+                <Select
+                  isMulti
+                  name="funcionarios"
+                  options={funcionarios.map(f => ({ value: f.id, label: f.nome }))}
+                  className="basic-multi-select"
+                  styles={customStyles}
+                />
               {erros.funcionarios && <p className="text-red-400 text-sm mt-1">{erros.funcionarios}</p>}
             </div>
 

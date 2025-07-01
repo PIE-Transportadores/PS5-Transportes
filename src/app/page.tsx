@@ -9,10 +9,9 @@ export default function Home() {
   return (
 
     <div>
-      <Tela_servico/>
+      <Tela_gerenciamento/>
     </div>
     
     
   );
 }
-
