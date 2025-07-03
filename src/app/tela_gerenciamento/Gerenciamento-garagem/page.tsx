@@ -5,14 +5,17 @@ import Popup_garagem from "./pop-garagem"
 import ModalGaragem from "@/app/componetes/cadastro_garagem/modal_garagem"
 import Form_Garagem_Edit from "./Form_Garagem_Edit"
 import { buscarGaragens } from "@/app/api/garagem/utils/BuscarGaragem"
+import { getCoordinatesFromCEP } from "@/lib/geocode"  // Importando a função para obter coordenadas via Awesome API
 
 interface Garagem {
   id: number
-  nome_garagem: string
+  garagem: string
   rua: string
   bairro: string
   numero: string
   cep: string
+  latitude?: number  // Adicionando latitude e longitude ao tipo
+  longitude?: number
 }
 
 export default function Viws_garagem({ isOpen_garagem, onClose_garagem }: any) {
@@ -21,7 +24,7 @@ export default function Viws_garagem({ isOpen_garagem, onClose_garagem }: any) {
   const [isOpen_garagem1, setIsOpen_garagem1] = useState(isOpen_garagem)
   const [idEdicao, setIdEdicao] = useState<number | null>(null)
   const [mostrarEditar, setMostrarEditar] = useState(false)
-
+  
   useEffect(() => {
     setIsOpen_garagem1(isOpen_garagem)
   }, [isOpen_garagem])
@@ -90,7 +93,7 @@ export default function Viws_garagem({ isOpen_garagem, onClose_garagem }: any) {
               <tbody>
                 {garagens.map((g) => (
                   <tr key={g.id} className="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition">
-                    <td className="px-6 py-4">{g.nome_garagem}</td>
+                    <td className="px-6 py-4">{g.garagem}</td>
                     <td className="px-6 py-4">{g.rua}</td>
                     <td className="px-6 py-4">{g.bairro}</td>
                     <td className="px-6 py-4">{g.numero}</td>

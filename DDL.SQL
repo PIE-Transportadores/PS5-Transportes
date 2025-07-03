@@ -21,7 +21,9 @@ CREATE TABLE Garagem (
     Rua VARCHAR(255),
     Bairro VARCHAR(255),
     Número INT,
-    Cep VARCHAR(8)
+    Cep VARCHAR(8), 
+    Latitude VARCHAR(255),
+    Longitude VARCHAR(255)
 );
 
 -- Criação da tabela Veiculo

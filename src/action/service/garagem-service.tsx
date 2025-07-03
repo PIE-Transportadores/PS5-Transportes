@@ -1,26 +1,35 @@
 'use server'
 import {prisma} from '@/lib/prisma'
 
-export default async function CriarGaragem(prevState: any,formData:FormData){
+export default async function CriarGaragem(prevState: any, formData: any) {
 
-    const garagem = formData.get('nome_garagem') as string
-    const rua = formData.get('rua') as string
-    const bairro = formData.get('bairro') as string
-    const numero =  Number(formData.get('numero'))
-    const cep = formData.get('cep') as string
+    // Se formData não for do tipo FormData, acesse as propriedades diretamente
+    if (typeof formData !== 'object') {
+        throw new Error("formData precisa ser um objeto.");
+    }
 
-    console.log(Object.keys(prisma))
-    
+    const garagem = formData.nome_garagem as string;
+    const rua = formData.rua as string;
+    const bairro = formData.bairro as string;
+    const numero = Number(formData.numero);
+    const cep = formData.cep as string;
+    const latitude = formData.latitude as string;
+    const longitude = formData.longitude as string;
+
+    console.log(Object.keys(prisma));
+
     await prisma.cadastro_garagem.create({
-        data:{
+        data: {
             garagem,
             rua,
             bairro,
             numero,
             cep,
+            latitude,
+            longitude,
         },
-    })
-    console.log("GARAGEM CADASTRADA")
+    });
+    console.log("GARAGEM CADASTRADA");
 
-    return {sucesso:true}
+    return { sucesso: true };
 }

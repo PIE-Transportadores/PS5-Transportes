@@ -22,14 +22,17 @@ model cadastro_funcionario{
   alojamento String
 }
 
-model cadastro_alojamento{
-
-  id Int @id @default(autoincrement())
-  alojamento String
-  cep Int
-  rua String
-  bairro String
-  numero Int
+model cadastro_alojamento {
+  id          Int      @id @default(autoincrement())
+  alojamento  String
+  cep         String   // <-- CORRIGIDO de Int para String
+  rua         String
+  bairro      String
+  numero      Int
+  capacidade  Int
+  // CAMPOS ADICIONADOS
+  latitude    Float?
+  longitude   Float?
 }
 
 model usuario {
@@ -69,4 +72,6 @@ model cadastro_garagem {
   bairro  String 
   numero  Int
   cep String 
+  latitude String 
+  longitude String
 }
