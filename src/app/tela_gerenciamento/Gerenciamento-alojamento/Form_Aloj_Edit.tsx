@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Popup_func_editar } from "./pop-func"; 
+// 1. Importar a Server Action que busca o endereço
+import { getAddressFromCepAction } from "@/action/cepAction"; 
 
 interface Props {
     id: number
@@ -9,26 +11,25 @@ interface Props {
     onClose: () => void
 }
 
-// 1. Adicionar 'capacidade' à interface do formulário
 interface AlojamentoForm {
     nome: string;
     bairro: string;
     rua: string;
     numero: string | number; 
-    cep: string | number;
-    capacidade: string | number; // Adicionado
+    cep: string; // CEP deve ser sempre string
+    capacidade: string | number; 
 }
 
 export default function Form_Aloj_Edit({ id, isOpen, onClose }: Props) {
     const [isPending, setIsPending] = useState(false);
-    // 2. Adicionar 'capacidade' ao estado inicial
+    const [isFetchingCep, setIsFetchingCep] = useState(false); // Estado para o "Buscando..."
     const [form, setForm] = useState<AlojamentoForm>({
         nome: "",
         bairro: "",
         rua: "",
         numero: "",
         cep: "",
-        capacidade: "" // Adicionado
+        capacidade: ""
     });
 
     useEffect(() => {
@@ -36,19 +37,17 @@ export default function Form_Aloj_Edit({ id, isOpen, onClose }: Props) {
             async function fetchData() {
                 try {
                     const res = await fetch(`/api/alojamentos/${id}`);
-                    if (!res.ok) {
-                        throw new Error('Falha ao buscar dados do alojamento');
-                    }
+                    if (!res.ok) throw new Error('Falha ao buscar dados do alojamento');
+                    
                     const data = await res.json();
 
-                    // 3. Carregar o valor da capacidade no estado do formulário
                     setForm({
                         nome: data.alojamento || "", 
                         bairro: data.bairro || "",
                         rua: data.rua || "",
                         numero: data.numero || "",
-                        cep: data.cep || "",
-                        capacidade: data.capacidade || "" // Adicionado
+                        cep: String(data.cep || ""), // Garante que o CEP inicial seja string
+                        capacidade: data.capacidade || ""
                     });
 
                 } catch (error) {
@@ -64,16 +63,38 @@ export default function Form_Aloj_Edit({ id, isOpen, onClose }: Props) {
         setForm(prevForm => ({ ...prevForm, [name]: value }));
     };
 
+    // 2. Adicionar a função que é disparada ao sair do campo CEP
+    const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const cepValue = e.target.value.replace(/\D/g, ''); // Limpa o CEP
+
+        if (cepValue.length !== 8) return;
+
+        setIsFetchingCep(true);
+        const result = await getAddressFromCepAction(cepValue);
+        setIsFetchingCep(false);
+
+        if (result.success) {
+            // Atualiza o estado do formulário com os novos dados de endereço
+            setForm(prevForm => ({
+                ...prevForm,
+                rua: result.data.address,
+                bairro: result.data.district
+            }));
+        } else {
+            alert(result.error);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsPending(true);
 
-        // 4. Incluir 'capacidade' nos dados a serem enviados para a API
         const dataToSend = {
             ...form,
             numero: Number(form.numero), 
-            cep: Number(form.cep),
-            capacidade: Number(form.capacidade) // Adicionado e convertido para número
+            capacidade: Number(form.capacidade),
+            // CORREÇÃO CRÍTICA APLICADA AQUI
+            cep: String(form.cep) 
         };
 
         try {
@@ -99,41 +120,45 @@ export default function Form_Aloj_Edit({ id, isOpen, onClose }: Props) {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Campo Nome */}
+                    {/* ... campos Nome e Capacidade ... */}
                     <div>
                         <label className="block text-sm mb-1">Nome</label>
                         <input type="text" name="nome" value={form.nome} onChange={handleChange} className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
-
-                    {/* 5. Adicionar o campo 'capacidade' no formulário JSX */}
                     <div>
                         <label className="block text-sm mb-1">Capacidade</label>
                         <input type="number" name="capacidade" value={form.capacidade} onChange={handleChange} min="1" className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
-                    {/* Outros campos... */}
+                    {/* 3. Conectar a lógica ao campo CEP */}
                     <div>
-                        <label className="block text-sm mb-1">Bairro</label>
-                        <input type="text" name="bairro" value={form.bairro} onChange={handleChange} className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <label className="block text-sm mb-1">CEP</label>
+                        <input 
+                            type="text" // Alterado para 'text' para melhor compatibilidade
+                            name="cep" 
+                            value={form.cep} 
+                            onChange={handleChange} 
+                            onBlur={handleCepBlur} // Evento adicionado
+                            maxLength={9}
+                            className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        {isFetchingCep && <p className="text-sm text-blue-400">Buscando endereço...</p>}
                     </div>
+
+                    {/* Os outros campos agora serão preenchidos automaticamente */}
                     <div>
                         <label className="block text-sm mb-1">Rua</label>
                         <input type="text" name="rua" value={form.rua} onChange={handleChange} className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                     <div>
+                        <label className="block text-sm mb-1">Bairro</label>
+                        <input type="text" name="bairro" value={form.bairro} onChange={handleChange} className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    </div>
+                    <div>
                         <label className="block text-sm mb-1">Número</label>
                         <input type="number" name="numero" value={form.numero} onChange={handleChange} min="1" className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
-                    <div>
-                        <label className="block text-sm mb-1">CEP</label>
-                        <input type="number" name="cep" value={form.cep} onChange={handleChange} className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                    </div>
 
-                    <button
-                        type="submit"
-                        disabled={isPending}
-                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition"
-                    >
+                    <button type="submit" disabled={isPending} className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition">
                         {isPending ? "Salvando..." : "Salvar Alterações"}
                     </button>
                 </form>
