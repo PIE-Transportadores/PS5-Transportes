@@ -1,12 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// /prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
@@ -14,68 +9,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model cadastro_funcionario{
-  id Int @id @default(autoincrement())
-  nome String
-  cpf String
-  turno String
-  alojamento String
+model cadastro_funcionario {
+  id          Int      @id @default(autoincrement())
+  nome        String
+  cpf         String
+  turno       String
+  alojamento  String
 }
 
-model cadastro_alojamento{
-
-  id Int @id @default(autoincrement())
-  alojamento String
-  cep Int
-  rua String
-  bairro String
-  numero Int
-  capacidade Int
+model cadastro_alojamento {
+  id          Int      @id @default(autoincrement())
+  alojamento  String
+  cep         String   // <-- CORRIGIDO de Int para String
+  rua         String
+  bairro      String
+  numero      Int
+  capacidade  Int
+  // CAMPOS ADICIONADOS
+  latitude    Float?
+  longitude   Float?
 }
 
 model usuario {
-  id    Int    @id @default(autoincrement())
-  nome  String
-  email String @unique
-  password String
-  sexo String
+  id         Int      @id @default(autoincrement())
+  nome       String
+  email      String   @unique
+  password   String
+  sexo       String
   dataCriada DateTime
 }
 
-model cadastro_veiculo{
-
-  id Int @id @default(autoincrement())
-  placa String
+model cadastro_veiculo {
+  id      Int    @id @default(autoincrement())
+  placa   String
   garagem String
-  marca String
-  ano Int
-  tipo String
-
+  marca   String
+  ano     Int
+  tipo    String
 }
 
-model cadastro_destino{
-  id Int @id @default(autoincrement())
+model cadastro_destino {
+  id      Int    @id @default(autoincrement())
   destino String
-  rua String
-  bairro String
-  numero Int
-  cep String
-
+  rua     String
+  bairro  String
+  numero  Int
+  cep     String
+  // CAMPOS ADICIONADOS
+  latitude  Float?
+  longitude Float?
 }
 
 model cadastro_garagem {
-  id  Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   garagem String
-  rua String 
-  bairro  String 
+  rua     String
+  bairro  String
   numero  Int
-  cep String 
+  cep     String
+  // CAMPOS ADICIONADOS
+  latitude  Float?
+  longitude Float?
 }
 
-model cadastro_servico{
-  id Int @id @default(autoincrement())
-  servico String
-  destino String
+model cadastro_servico {
+  id         Int      @id @default(autoincrement())
+  servico    String
+  destino    String
   dataInicio DateTime
-  dataFim DateTime
+  dataFim    DateTime
 }
