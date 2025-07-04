@@ -56,32 +56,36 @@ export async function DELETE(request: Request, { params }: RouteParams) {
         return new NextResponse('Erro interno do servidor', { status: 500 });
     }
 }
-
-// Função PUT (Atualiza um)
 export async function PUT(request: Request, { params }: RouteParams) {
     try {
-        const id = parseInt(params.id, 10); // Usando params.id diretamente
+        const id = parseInt(params.id, 10);
         if (isNaN(id)) {
             return new NextResponse('ID inválido', { status: 400 });
         }
         
         const data = await request.json();
-        const { nome, bairro, rua, numero, cep, capacidade } = data;
+        // Mantive o nome da variável "nome" para corresponder ao seu formulário de edição
+        const { alojamento: nome, bairro, rua, numero, cep, capacidade } = data;
 
         const dadosParaAtualizar: Prisma.cadastro_alojamentoUpdateInput = {};
 
+        // No seu schema, o campo é "alojamento"
         if (nome !== undefined) dadosParaAtualizar.alojamento = nome;
         if (bairro !== undefined) dadosParaAtualizar.bairro = bairro;
         if (rua !== undefined) dadosParaAtualizar.rua = rua;
 
-        if (numero !== undefined && numero !== null) {
-            dadosParaAtualizar.numero = parseInt(String(numero), 10);
+        // Para os campos numéricos, a conversão está correta
+        if (numero !== undefined) {
+            dadosParaAtualizar.numero = Number(numero);
         }
-        if (cep !== undefined && cep !== null) {
-            dadosParaAtualizar.cep = parseInt(String(cep), 10);
+        if (capacidade !== undefined) {
+            dadosParaAtualizar.capacidade = Number(capacidade);
         }
-        if (capacidade !== undefined && capacidade !== null) {
-            dadosParaAtualizar.capacidade = parseInt(String(capacidade), 10);
+
+        // CORREÇÃO APLICADA AQUI
+        if (cep !== undefined) {
+            // Garantimos que o CEP é sempre uma string
+            dadosParaAtualizar.cep = String(cep);
         }
 
         if (Object.keys(dadosParaAtualizar).length === 0) {
