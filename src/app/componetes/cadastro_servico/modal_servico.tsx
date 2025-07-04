@@ -124,12 +124,9 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
                 name="destino"
                 className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Selecione o destino</option>
-                {destinos.map((dest) => (
-                  <option key={dest.id} value={dest.nome}>
-                    {dest.nome}
-                  </option>
-                ))}
+               <option value="selecione destino">
+                opa
+               </option>
               </select>
               {erros.destino && <p className="text-red-400 text-sm mt-1">{erros.destino}</p>}
             </div>

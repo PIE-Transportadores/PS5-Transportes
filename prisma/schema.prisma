@@ -24,7 +24,7 @@ model cadastro_alojamento {
   rua         String
   bairro      String
   numero      Int
-  capacidade  Int
+  capacidade  Int ?
   // CAMPOS ADICIONADOS
   latitude    Float?
   longitude   Float?

@@ -11,7 +11,7 @@ export default function Home() {
   return (
 
     <div>
-      <Home1/>
+      <Tela_gerenciamento/>
     </div>
     
     
