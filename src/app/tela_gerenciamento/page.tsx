@@ -6,7 +6,7 @@ import ModalVeiculos from '../componetes/cadastro_veiculos/modal_veiculos'
 //import ModalAlojamento from '../componetes/cadastro_alojamento/modal_alojamento'
 import Viws_aloj from './Gerenciamento-alojamento/Viws_aloj'
 import Viws_serv from './Gerenciamento-servico/page'
-import ModalGaragem from '../componetes/cadastro_garagem/modal_garagem'
+import Viws_garagem from './Gerenciamento-garagem/page'
 
 export default function Tela_gerenciamento(){
 
@@ -71,11 +71,13 @@ export default function Tela_gerenciamento(){
             <Viws_aloj isOpen_aloj={isOpen_aloj} onClose_aloj={() => setIsOpen_aloj(false)} />
 
             <Viws_serv isOpen_serv={isOpen_serv} onClose_serv = {()=> setIsOpen_serv(false)}/>
+            
+            <Viws_garagem isOpen_garagem={isGaragemPopup} onClose_garagem={() => setIsGaragemPopup(false)} />
 
             <div className='flex-1 flex items-center justify-center relative'>
                 <ModalVeiculos isOpen={isVeiculosPopUp} onClose={() => setIsVeiculosPopUp(false)}/>   
                 {/* O ModalAlojamento FOI REMOVIDO DAQUI, POIS Viws_aloj JÁ O CONTROLA */}
-                <ModalGaragem isOpen={isGaragemPopup} onClose={() => setIsGaragemPopup(false)}/>
+                
             </div>
         </div>
     </div>
