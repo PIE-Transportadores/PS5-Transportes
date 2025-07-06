@@ -1,151 +1,232 @@
-import { useState, useEffect, startTransition } from 'react'
+'use client'
 import Popup from "@/modal/modal_cadastro_garagem/popup"
+import React, { useEffect, useState, useTransition, useActionState } from "react"
 import CriarGaragem from "@/action/service/garagem-service"
-import { useActionState } from 'react'
-import { getCoordinatesFromCEP } from "@/lib/geocode"  // Importando a função da nova API
+import { getAddressFromCepAction } from "@/action/cepAction"
+import { getCoordinatesFromCEP } from "@/lib/geocode"
 
-const inicializarForm = { sucesso: false }
+const inicializarForm = { sucesso: false, erro: null }
 
-export default function ModalGaragem({ isOpen, onClose, reabrirlista }: any) {
+export default function ModalGaragem({ isOpen, onClose, reabrirlista }: { isOpen: boolean, onClose: () => void, reabrirlista: () => void }) {
   const [state, formAction] = useActionState(CriarGaragem, inicializarForm)
+  const [isPending, startTransition] = useTransition()
 
-  const [nomeGaragem, setNomeGaragem] = useState("")
-  const [rua, setRua] = useState("")
-  const [numero, setNumero] = useState("")
-  const [bairro, setBairro] = useState("")
-  const [cep, setCep] = useState("")
-  const [latitude, setLatitude] = useState<string>("")
-  const [longitude, setLongitude] = useState<string>("")
+  interface ErrosForm {
+    nome?: string
+    bairro?: string
+    rua?: string
+    numero?: string
+    cep?: string
+  }
+
+  const [erros, setErrors] = useState<ErrosForm>({})
+
+  // Campos controlados que podem ser auto-preenchidos
+  const [cep, setCep] = useState('')
+  const [rua, setRua] = useState('')
+  const [bairro, setBairro] = useState('')
+  const [latitude, setLatitude] = useState<string>('')
+  const [longitude, setLongitude] = useState<string>('')
+
+  const [isFetchingCep, setIsFetchingCep] = useState(false)
+  const [erroCep, setErroCep] = useState<string | null>(null)
 
   useEffect(() => {
-    if (state.sucesso === true && isOpen === true) {
+    if (state.sucesso && isOpen) {
       onClose()
       reabrirlista()
-    } else {
-      state.sucesso = false
     }
-  }, [state.sucesso, onClose, reabrirlista])
+  }, [state.sucesso, onClose, isOpen, reabrirlista])
 
-  const obterCoordenadas = async () => {
-    try {
-      const coordinates = await getCoordinatesFromCEP(cep) // Usando a função da "Awesome API"
+  /***
+   * Ao sair do campo CEP, tenta buscar endereço (rua/bairro) + coordenadas.
+   * Caso encontre, preenche os campos e foca no próximo input (número).
+   */
+  const handleCepBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
+
+
+    const form = event.currentTarget.form;
+    const cepValue = event.target.value.replace(/\D/g, '');
+
+    if (cepValue.length !== 8) {
+      setErroCep("CEP inválido (deve conter 8 dígitos)");
+      return;
+    }
+
+    setIsFetchingCep(true);
+    setErroCep(null);
+
+    const result = await getAddressFromCepAction(cepValue);
+    console.log("Resultado da API de CEP:", result); // <--- Debug aqui
+
+    setIsFetchingCep(false);
+
+    if (result.success) {
+      // Tente ajustar os campos se necessário
+      setRua(result.data.address ?? '')
+      setBairro(result.data.district ?? '')
+
       
-      if (coordinates) {
-        setLatitude(coordinates.latitude.toString())  // Atualiza latitude
-        setLongitude(coordinates.longitude.toString()) // Atualiza longitude
-      } else {
-        alert("Endereço não encontrado.")
-      }
-    } catch (error) {
-      console.error("Erro ao obter coordenadas:", error)
-      alert("Erro ao obter coordenadas.")
+      const numeroInput = form?.elements.namedItem('numero') as HTMLInputElement;
+      numeroInput?.focus();
+    } else {
+      setErroCep(result.error || "CEP não encontrado");
+      setRua("");
+      setBairro("");
     }
-  }
 
-  const salvarGaragem = () => {
-    // Use startTransition para chamar funções assíncronas corretamente
+    const coordinates = await getCoordinatesFromCEP(cepValue);
+    if (coordinates) {
+      setLatitude(coordinates.latitude.toString());
+      setLongitude(coordinates.longitude.toString());
+    }
+  };
+
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget)
+    const nome_garagem = formData.get('nome_garagem')?.toString().trim() ?? ''
+    const numero = formData.get('numero')?.toString().trim() ?? ''
+    const cepForm = formData.get('cep')?.toString().trim() ?? ''
+
+    // Validação simples
+    const newErrors: ErrosForm = {}
+    if (!nome_garagem) newErrors.nome = 'Nome é obrigatório'
+    if (!bairro) newErrors.bairro = 'Bairro é obrigatório'
+    if (!numero) newErrors.numero = 'Número é obrigatório'
+    if (!cepForm) newErrors.cep = 'CEP é obrigatório'
+    if (!rua) newErrors.rua = 'Rua é obrigatória'
+
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors)
+      return
+    }
+
+    setErrors({})
+
     startTransition(() => {
-      formAction({ nome_garagem: nomeGaragem, rua, numero, bairro, cep, latitude, longitude })
+      formAction({
+        nome_garagem,
+        rua,
+        numero,
+        bairro,
+        cep: cepForm,
+        latitude,
+        longitude,
+      })
     })
   }
-  
+
   return (
     <div className="modal_garagem">
       <Popup isOpen={isOpen} onClose={onClose}>
-        <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 rounded-lg shadow-xl w-[700px] max-w-full">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Cadastro de Garagem</h2>
+        <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-[700px] h-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-sans">Cadastro de Garagem</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">&times;</button>
           </div>
 
-          <div>
+          <form onSubmit={handleSubmit}>
             <div>
-              <label className="block mb-2">Nome da Garagem</label>
+              <label className="block text-sm mb-1">Nome</label>
               <input
+                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
                 type="text"
-                className="border border-gray-300 p-2 w-full mb-4"
-                value={nomeGaragem}
-                onChange={(e) => setNomeGaragem(e.target.value)}
+                name="nome_garagem"
+                placeholder="Garagem"
               />
+              {erros.nome && <p className="text-red-400 text-sm mt-1">{erros.nome}</p>}
             </div>
 
             <div>
-              <label className="block mb-2">Rua</label>
+              <label className="block text-sm mb-1">CEP</label>
               <input
+                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
+                placeholder="CEP"
+                name="cep"
                 type="text"
-                className="border border-gray-300 p-2 w-full mb-4"
+                maxLength={9}
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                onBlur={handleCepBlur}
+              />
+              {erros.cep && <p className="text-red-400 text-sm mt-1">{erros.cep}</p>}
+              {erroCep && <p className="text-red-400 text-sm mt-1">{erroCep}</p>}
+              {isFetchingCep && <p className="text-blue-400 text-sm mt-1">Buscando endereço...</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Rua</label>
+              <input
+                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
+                placeholder="Rua"
+                type="text"
+                name="rua"
                 value={rua}
                 onChange={(e) => setRua(e.target.value)}
               />
+              {erros.rua && <p className="text-red-400 text-sm mt-1">{erros.rua}</p>}
             </div>
 
             <div>
-              <label className="block mb-2">Número</label>
+              <label className="block text-sm mb-1">Bairro</label>
               <input
+                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
                 type="text"
-                className="border border-gray-300 p-2 w-full mb-4"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block mb-2">Bairro</label>
-              <input
-                type="text"
-                className="border border-gray-300 p-2 w-full mb-4"
+                name="bairro"
+                placeholder="Bairro"
                 value={bairro}
                 onChange={(e) => setBairro(e.target.value)}
               />
+              {erros.bairro && <p className="text-red-400 text-sm mt-1">{erros.bairro}</p>}
             </div>
 
             <div>
-              <label className="block mb-2">CEP</label>
+              <label className="block text-sm mb-1">Número</label>
               <input
-                type="text"
-                className="border border-gray-300 p-2 w-full mb-4"
-                value={cep}
-                onChange={(e) => setCep(e.target.value)}
+                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
+                type="number"
+                name="numero"
+                placeholder="Número"
+                min="1"
               />
+              {erros.numero && <p className="text-red-400 text-sm mt-1">{erros.numero}</p>}
             </div>
 
-            <div className="mb-4">
-              <button
-                onClick={obterCoordenadas}
-                className="bg-blue-500 text-white p-2 rounded"
-              >
-                Obter Coordenadas
-              </button>
+            {/* Latitude e longitude somente leitura */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm mb-1">Latitude</label>
+                <input
+                  className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
+                  type="text"
+                  value={latitude}
+                  readOnly
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1">Longitude</label>
+                <input
+                  className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
+                  type="text"
+                  value={longitude}
+                  readOnly
+                />
+              </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block">Latitude</label>
-              <input
-                type="text"
-                value={latitude}
-                className="border border-gray-300 p-2 w-full mb-4"
-                readOnly
-              />
-            </div>
+            <button
+              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition mt-4"
+              type="submit"
+              disabled={isPending}
+            >
+              {isPending ? 'Salvando...' : 'Cadastrar'}
+            </button>
 
-            <div className="mb-4">
-              <label className="block">Longitude</label>
-              <input
-                type="text"
-                value={longitude}
-                className="border border-gray-300 p-2 w-full mb-4"
-                readOnly
-              />
-            </div>
-
-            <div>
-              <button
-                onClick={salvarGaragem}
-                className="bg-green-500 text-white p-2 rounded"
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
+            {state?.erro && <p className="text-red-400 text-sm mt-1">{state.erro}</p>}
+          </form>
         </div>
       </Popup>
     </div>

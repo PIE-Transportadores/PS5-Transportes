@@ -50,8 +50,9 @@ export default function ModalAlojamento({ isOpen, onClose }: { isOpen: boolean, 
     setIsFetchingCep(false);
 
     if (result.success) {
-      setRua(result.data.rua ?? "");
-      setBairro(result.data.bairro ?? "");
+      setRua(result.data.address ?? '')
+      setBairro(result.data.district ?? '')
+
 
       if (form) {
         const numeroInput = form.elements.namedItem('numero') as HTMLInputElement;
