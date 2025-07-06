@@ -1,17 +1,11 @@
 // /src/lib/geocode.ts
 
-// Definimos uma interface para garantir que o retorno da nossa função seja sempre o mesmo
 export interface Coordinates {
   latitude: number;
   longitude: number;
 }
 
-/**
- * Busca as coordenadas geográficas (latitude e longitude) de um CEP
- * utilizando a Awesome API.
- * @param cep O CEP a ser consultado (somente números).
- * @returns Um objeto com latitude e longitude, ou null se não for encontrado.
- */
+
 export async function getCoordinatesFromCEP(cep: string): Promise<Coordinates | null> {
   const token = process.env.AWESOME_API_TOKEN;
   if (!token) {

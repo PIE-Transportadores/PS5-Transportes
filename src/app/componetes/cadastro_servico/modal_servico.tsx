@@ -3,6 +3,10 @@ import Popup from "@/modal/modal_cadastro_servico/popup"
 import CriarServico from "@/action/service/servico-service"
 import React, { useActionState, useEffect, useState, useTransition } from 'react'
 import { buscarFuncionarios } from "@/app/api/funcionarios/utils/BuscarFuncionario"
+<<<<<<< HEAD
+=======
+import Select from 'react-select'
+>>>>>>> Joao-lira
 
 
 const inicializarForm = { sucesso: false }
@@ -63,6 +67,36 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
     })
   }
 
+<<<<<<< HEAD
+=======
+  const customStyles = {
+    option: (provided: any, state: any) => ({
+      ...provided,
+      color: 'white',
+      backgroundColor: state.isSelected ? '#2563eb' : '#1f2937', // Azul ou cinza escuro
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: '#1f2937', // Cor do menu suspenso
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      backgroundColor: '#1f2937',
+      borderColor: '#4b5563',
+      color: 'white',
+    }),
+    singleValue: (provided: any) => ({
+      ...provided,
+      color: '#2563eb',
+    }),
+    multiValueLabel: (provided: any) => ({
+      ...provided,
+      color: 'black',
+    }),
+  }
+
+  
+>>>>>>> Joao-lira
   return (
     <div className="modal_servico">
       <Popup isOpen={isOpen} onClose={onClose}>
@@ -96,12 +130,18 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
                 name="destino"
                 className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
+<<<<<<< HEAD
                 <option value="">Selecione o destino</option>
                 {destinos.map((dest) => (
                   <option key={dest.id} value={dest.nome}>
                     {dest.nome}
                   </option>
                 ))}
+=======
+               <option value="selecione destino">
+                opa
+               </option>
+>>>>>>> Joao-lira
               </select>
               {erros.destino && <p className="text-red-400 text-sm mt-1">{erros.destino}</p>}
             </div>
@@ -130,6 +170,7 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
 
             <div>
               <label className="block text-sm mb-1">Funcionários</label>
+<<<<<<< HEAD
               <select
                 name="funcionarios"
                 multiple
@@ -141,6 +182,16 @@ export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
                   </option>
                 ))}
               </select>
+=======
+             
+                <Select
+                  isMulti
+                  name="funcionarios"
+                  options={funcionarios.map(f => ({ value: f.id, label: f.nome }))}
+                  className="basic-multi-select"
+                  styles={customStyles}
+                />
+>>>>>>> Joao-lira
               {erros.funcionarios && <p className="text-red-400 text-sm mt-1">{erros.funcionarios}</p>}
             </div>
 

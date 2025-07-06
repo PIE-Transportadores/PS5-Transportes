@@ -5,6 +5,7 @@
 import { PrismaClient } from '@prisma/client';
 import { getCoordinatesFromCEP } from '@/lib/geocode';
 import { revalidatePath } from 'next/cache';
+import { getAddressDetailsFromCEP } from '@/lib/geocode';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +23,6 @@ export interface UpdateCoordinatesPayload {
 /**
  * Resolve o CEP e salva as coordenadas para um único registro.
  */
-// AQUI ESTÁ A CORREÇÃO FINAL: O NOME COMPLETO DA INTERFACE ESTÁ CORRETO AGORA
 export async function resolveAndSaveCoordinates(payload: UpdateCoordinatesPayload) {
   const { tableName, recordId, cep, pathToRevalidate } = payload;
 
@@ -123,4 +123,18 @@ export async function resolveRouteCoordinatesBatch(payload: BatchPayload) {
 
   console.log("Processamento em lote finalizado.", results);
   return { success: true, details: results };
+<<<<<<< HEAD
+=======
+}
+
+export async function getAddressFromCepAction(cep: string) {
+  // Ela chama a nossa nova função, sem tocar na de coordenadas
+  const addressDetails = await getAddressDetailsFromCEP(cep);
+
+  if (!addressDetails) {
+    return { error: 'CEP não encontrado ou inválido.' };
+  }
+
+  return { success: true, data: addressDetails };
+>>>>>>> Joao-lira
 }

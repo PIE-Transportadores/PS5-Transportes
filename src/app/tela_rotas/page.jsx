@@ -10,7 +10,6 @@ export default function MapaPage(){
     const [rotaInfo,setRotaInfo] = useState (null)
 
     useEffect(()=>{
-        //opagit
 
         
         if (!isLoaded || !window.google || !mapRef.current) return

@@ -13,8 +13,8 @@ export default async function CriarGaragem(prevState: any, formData: any) {
     const bairro = formData.bairro as string;
     const numero = Number(formData.numero);
     const cep = formData.cep as string;
-    const latitude = formData.latitude as string;
-    const longitude = formData.longitude as string;
+    const latitude = Number(formData.latitude as string );
+    const longitude = Number(formData.longitude as string) ;
 
     console.log(Object.keys(prisma));
 
