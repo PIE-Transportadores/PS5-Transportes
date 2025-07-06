@@ -10,24 +10,31 @@ datasource db {
 }
 
 model cadastro_funcionario {
-  id          Int      @id @default(autoincrement())
-  nome        String
-  cpf         String
-  turno       String
-  alojamento  String
+  id         Int    @id @default(autoincrement())
+  nome       String
+  cpf        String
+  turno      String
+  
+  // Relação com Alojamento
+  alojamentoId Int?
+  alojamento   cadastro_alojamento? @relation(fields: [alojamentoId], references: [id])
+
+  servicos   servico_funcionario[]
 }
 
+
 model cadastro_alojamento {
-  id          Int      @id @default(autoincrement())
-  alojamento  String
-  cep         String   // <-- CORRIGIDO de Int para String
-  rua         String
-  bairro      String
-  numero      Int
-  capacidade  Int ?
-  // CAMPOS ADICIONADOS
-  latitude    Float?
-  longitude   Float?
+  id         Int      @id @default(autoincrement())
+  alojamento String
+  cep        String
+  rua        String
+  bairro     String
+  numero     Int
+  capacidade Int?
+  latitude   Float? // Essencial para o mapa
+  longitude  Float? // Essencial para o mapa
+
+  funcionarios cadastro_funcionario[] // Relação: Um alojamento pode ter vários funcionários
 }
 
 model usuario {
@@ -49,33 +56,58 @@ model cadastro_veiculo {
 }
 
 model cadastro_destino {
-  id      Int    @id @default(autoincrement())
-  destino String
-  rua     String
-  bairro  String
-  numero  Int
-  cep     String
-  // CAMPOS ADICIONADOS
-  latitude  Float?
-  longitude Float?
+  id        Int      @id @default(autoincrement())
+  destino   String
+  rua       String
+  bairro    String
+  cidade    String
+  estado    String
+  numero    Int
+  cep       String
+  latitude  Float // Essencial para o mapa
+  longitude Float // Essencial para o mapa
+
+  servicos cadastro_servico[] // Relação: Um destino pode ter vários serviços
 }
 
+
 model cadastro_garagem {
-  id      Int    @id @default(autoincrement())
+  id      Int      @id @default(autoincrement())
   garagem String
   rua     String
   bairro  String
   numero  Int
   cep     String
-  // CAMPOS ADICIONADOS
-  latitude  Float?
-  longitude Float?
+  latitude  Float? // Essencial para o mapa
+  longitude Float? // Essencial para o mapa
+
+  servicos cadastro_servico[] // Relação: Uma garagem pode ter vários serviços
 }
 
 model cadastro_servico {
   id         Int      @id @default(autoincrement())
   servico    String
-  destino    String
   dataInicio DateTime
   dataFim    DateTime
+
+  // Relação com Destino
+  destinoId Int
+  destino   cadastro_destino @relation(fields: [destinoId], references: [id])
+
+  // Relação com Garagem
+  garagemId Int
+  garagem   cadastro_garagem @relation(fields: [garagemId], references: [id])
+
+  funcionarios servico_funcionario[]
+}
+
+
+model servico_funcionario {
+  id            Int      @id @default(autoincrement())
+  servicoId     Int
+  funcionarioId Int
+  servico       cadastro_servico     @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+  funcionario   cadastro_funcionario @relation(fields: [funcionarioId], references: [id], onDelete: Cascade)
+
+  @@unique([servicoId, funcionarioId]) // Evita duplicatas
 }

@@ -7,6 +7,7 @@ import ModalVeiculos from '../componetes/cadastro_veiculos/modal_veiculos'
 import Viws_aloj from './Gerenciamento-alojamento/Viws_aloj'
 import Viws_serv from './Gerenciamento-servico/page'
 import Viws_garagem from './Gerenciamento-garagem/page'
+import Viws_destino from './Gerenciamento-destinos/page'
 
 export default function Tela_gerenciamento(){
 
@@ -19,6 +20,7 @@ export default function Tela_gerenciamento(){
     const [isOpen_aloj, setIsOpen_aloj] = useState(false)
 
     const[isOpen_serv,setIsOpen_serv] = useState(false)
+    const [isDestinoPopup, setIsDestinoPopup] = useState(false)
 
     return (
     <div className="flex h-screen bg-gray-200">
@@ -53,7 +55,10 @@ export default function Tela_gerenciamento(){
             >
                 Cadastro de Garagem
             </button>
-            <button className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition">
+            <button 
+                className="mb-4 w-full px-4 py-2 bg-blue-900 text-white rounded shadow hover:bg-blue-800 transition"
+                onClick={() => setIsDestinoPopup(true)}
+                >
                 Cadastro de Destino
             </button>
             <button 
@@ -73,6 +78,8 @@ export default function Tela_gerenciamento(){
             <Viws_serv isOpen_serv={isOpen_serv} onClose_serv = {()=> setIsOpen_serv(false)}/>
             
             <Viws_garagem isOpen_garagem={isGaragemPopup} onClose_garagem={() => setIsGaragemPopup(false)} />
+            
+            <Viws_destino isOpen_dest={isDestinoPopup} onClose_dest={() => setIsDestinoPopup(false)} />
 
             <div className='flex-1 flex items-center justify-center relative'>
                 <ModalVeiculos isOpen={isVeiculosPopUp} onClose={() => setIsVeiculosPopUp(false)}/>   

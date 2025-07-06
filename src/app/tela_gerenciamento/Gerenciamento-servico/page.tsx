@@ -4,6 +4,8 @@ import ModalServico from "@/app/componetes/cadastro_servico/modal_servico"
 import { buscarServicos } from "@/app/api/servico/utils/BuscarServico"
 import Popup_serv from "./pop-serv"
 import Form_Serv_Edit from "./Form_serv_Edit"
+// 1. CORREÇÃO: Importar o useRouter de 'next/navigation' para o App Router
+import { useRouter } from 'next/navigation';
 
 interface Servico {
     id: number
@@ -14,6 +16,9 @@ interface Servico {
 }
 
 export default function Viws_serv({ isOpen_serv, onClose_serv }: any) {
+
+    // 2. CORREÇÃO: Chamar o useRouter no nível principal do componente
+    const router = useRouter();
 
     const [servicos, setServicos] = useState<Servico[]>([])
     const [isPopup, setIspopup] = useState(false)
@@ -34,8 +39,16 @@ export default function Viws_serv({ isOpen_serv, onClose_serv }: any) {
         carregar()
     }, [])
 
+    // 3. CORREÇÃO: A função agora usa a instância 'router' já criada.
+    const handleVerificarRota = (servicoId: number) => {
+        // A linha 'const router = useRouter()' foi removida daqui.
+        // Redireciona para a página de rotas passando o ID do serviço
+        router.push(`/tela_rotas/${servicoId}`);
+    };
+
     // Função para deletar um serviço
     const delete_servico = async (id: number) => {
+        // SUGESTÃO: Substituir window.confirm por um modal estilizado para melhor UX.
         const confirmado = window.confirm("Tem certeza que deseja excluir este serviço?");
 
         if (!confirmado) return;
@@ -102,13 +115,14 @@ export default function Viws_serv({ isOpen_serv, onClose_serv }: any) {
                                     <th className="px-6 py-3">Descrição</th>
                                     <th className="px-6 py-3">Data Início</th>
                                     <th className="px-6 py-3">Data Fim</th>
-                                    <th className="px-6 py-3 text-center" colSpan={2}>Ações</th>
+                                    <th className="px-6 py-3 text-center" colSpan={3}>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {servicos.map((serv) => (
                                     <tr key={serv.id} className="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition">
                                         <td className="px-6 py-4">{serv.servico}</td>
+                                        <td className="px-6 py-4">{serv.destino}</td>
                                         <td className="px-6 py-4">{serv.dataInicio}</td>
                                         <td className="px-6 py-4">{serv.dataFim}</td>
                                         <td className="px-3 py-4">
@@ -131,6 +145,15 @@ export default function Viws_serv({ isOpen_serv, onClose_serv }: any) {
                                                 Excluir
                                             </button>
                                         </td>
+                                        <td className="px-3 py-4">
+                                            <button
+                                                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                                                onClick={() => handleVerificarRota(serv.id)}
+                                            >
+                                                Verificar Rota
+                                            </button>
+                                        </td>
+
                                     </tr>
                                 ))}
                             </tbody>

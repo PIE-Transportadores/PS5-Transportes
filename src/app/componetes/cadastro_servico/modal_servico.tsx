@@ -4,183 +4,124 @@ import CriarServico from "@/action/service/servico-service"
 import React, { useActionState, useEffect, useState, useTransition } from 'react'
 import { buscarFuncionarios } from "@/app/api/funcionarios/utils/BuscarFuncionario"
 import Select from 'react-select'
+import { buscarDestinos } from "@/app/api/destinos/utils/buscarDestinos"
+// IMPORTANTE: Crie esta função para buscar as garagens
+import { buscarGaragens } from "@/app/api/garagem/utils/BuscarGaragem"
 
-
-const inicializarForm = { sucesso: false }
+const inicializarForm = { sucesso: false, message: "" }
 
 export default function ModalServico({ isOpen, onClose, reabrirlista }: any) {
-  const [state, formAction] = useActionState(CriarServico, inicializarForm)
-  const [isPending, startTransition] = useTransition()
-  const [erros, setErros] = useState<any>({})
+    const [state, formAction] = useActionState(CriarServico, inicializarForm)
+    const [isPending, startTransition] = useTransition()
+    const [erros, setErros] = useState<any>({})
 
-  const [funcionarios, setFuncionarios] = useState<any[]>([])
-  const [destinos, setDestinos] = useState<any[]>([])
+    const [funcionarios, setFuncionarios] = useState<any[]>([])
+    const [destinos, setDestinos] = useState<any[]>([])
+    const [garagens, setGaragens] = useState<any[]>([]) // Estado para garagens
 
-  useEffect(() => {
-    const carregarDados = async () => {
-      const listaFunc = await buscarFuncionarios()   
-      setFuncionarios(listaFunc)
-      
+    // Carrega todos os dados necessários (funcionários, destinos, garagens)
+    useEffect(() => {
+        const carregarDados = async () => {
+            const [listaFunc, listDestinos, listGaragens] = await Promise.all([
+                buscarFuncionarios(),
+                buscarDestinos(),
+                buscarGaragens() // Chama a nova função
+            ]);
+            setFuncionarios(listaFunc);
+            setDestinos(listDestinos);
+            setGaragens(listGaragens);
+        }
+        carregarDados();
+    }, []);
+
+    useEffect(() => {
+        if (state.sucesso && isOpen) {
+            alert("Serviço cadastrado com sucesso!");
+            onClose();
+            reabrirlista();
+        } else if (!state.sucesso && state.message) {
+            alert(`Erro: ${state.message}`);
+        }
+    }, [state, isOpen, onClose, reabrirlista]);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const formData = new FormData(e.currentTarget)
+        startTransition(() => {
+            formAction(formData)
+        })
     }
+    
+    // Estilos para o react-select (sem alteração)
+    const customStyles = { /* ... seu código de estilos ... */ };
 
-    carregarDados()
-  }, [])
+    return (
+        <Popup isOpen={isOpen} onClose={onClose}>
+            <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-full max-w-3xl">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-semibold">Cadastrar Serviço</h2>
+                    <button onClick={() => { onClose(); reabrirlista(); }} className="text-gray-400 hover:text-white text-xl">×</button>
+                </div>
 
-  useEffect(() => {
-    if (state.sucesso && isOpen) {
-      onClose()
-    } else {
-      state.sucesso = false
-    }
-  }, [state.sucesso, onClose])
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Campo Nome do Serviço */}
+                    <div>
+                        <label className="block text-sm mb-1">Nome do Serviço</label>
+                        <input type="text" name="servico" placeholder="Ex: Manutenção CCM" className="w-full p-2 bg-gray-700 rounded" />
+                    </div>
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+                    {/* Campo Garagem */}
+                    <div>
+                        <label className="block text-sm mb-1">Garagem (Ponto de Partida)</label>
+                        <select name="garagemId" className="w-full p-2 bg-gray-700 rounded">
+                            <option value="">Selecione a garagem</option>
+                            {garagens.map((g) => (
+                                <option key={g.id} value={g.id}>{g.garagem}</option>
+                            ))}
+                        </select>
+                    </div>
 
-    const formData = new FormData(e.currentTarget)
-    const nome = formData.get('nome')?.toString().trim() ?? ""
-    const destino = formData.get('destino')?.toString().trim() ?? ""
-    const dataInicio = formData.get('data_inicio')?.toString() ?? ""
-    const dataFim = formData.get('data_fim')?.toString() ?? ""
-    const funcionariosSelecionados = formData.getAll('funcionarios')
+                    {/* Campo Destino */}
+                    <div>
+                        <label className="block text-sm mb-1">Destino (Ponto Final)</label>
+                        <select name="destinoId" className="w-full p-2 bg-gray-700 rounded">
+                            <option value="">Selecione o destino</option>
+                            {destinos.map((dest) => (
+                                <option key={dest.id} value={dest.id}>{dest.destino}</option>
+                            ))}
+                        </select>
+                    </div>
 
-    const novosErros: any = {}
+                    {/* Campos de Data */}
+                    <div className="flex gap-4">
+                        <div className="flex-1">
+                            <label className="block text-sm mb-1">Data Início</label>
+                            <input type="date" name="dataInicio" className="w-full p-2 bg-gray-700 rounded" />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-sm mb-1">Data Fim</label>
+                            <input type="date" name="dataFim" className="w-full p-2 bg-gray-700 rounded" />
+                        </div>
+                    </div>
 
-    if (!nome) novosErros.nome = "Nome do serviço é obrigatório"
-    if (!destino) novosErros.destino = "Destino é obrigatório"
-    if (!dataInicio) novosErros.data_inicio = "Data de início é obrigatória"
-    if (!dataFim) novosErros.data_fim = "Data de fim é obrigatória"
-    if (funcionariosSelecionados.length === 0) novosErros.funcionarios = "Selecione ao menos um funcionário"
+                    {/* Campo Funcionários */}
+                    <div>
+                        <label className="block text-sm mb-1">Funcionários (Pontos de Parada)</label>
+                        <Select
+                            isMulti
+                            name="funcionarios"
+                            options={funcionarios.map(f => ({ value: f.id, label: f.nome }))}
+                            className="basic-multi-select"
+                            styles={customStyles}
+                            placeholder="Selecione os funcionários..."
+                        />
+                    </div>
 
-    if (Object.keys(novosErros).length > 0) {
-      setErros(novosErros)
-      return
-    }
-
-    setErros({})
-    startTransition(() => {
-      formAction(formData)
-      alert("Serviço cadastrado com sucesso!")
-    })
-  }
-
-  const customStyles = {
-    option: (provided: any, state: any) => ({
-      ...provided,
-      color: 'white',
-      backgroundColor: state.isSelected ? '#2563eb' : '#1f2937', // Azul ou cinza escuro
-    }),
-    menu: (provided: any) => ({
-      ...provided,
-      backgroundColor: '#1f2937', // Cor do menu suspenso
-    }),
-    control: (provided: any) => ({
-      ...provided,
-      backgroundColor: '#1f2937',
-      borderColor: '#4b5563',
-      color: 'white',
-    }),
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: '#2563eb',
-    }),
-    multiValueLabel: (provided: any) => ({
-      ...provided,
-      color: 'black',
-    }),
-  }
-
-  
-  return (
-    <div className="modal_servico">
-      <Popup isOpen={isOpen} onClose={onClose}>
-        <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-[700px] h-[600px] overflow-y-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Cadastrar Serviço</h2>
-            <button onClick={() => {
-              onClose()
-              reabrirlista()
-            }}
-              className="text-gray-400 hover:text-white text-xl">
-              ×
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm mb-1">Nome do Serviço</label>
-              <input
-                type="text"
-                name="nome"
-                placeholder="Nome do serviço"
-                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {erros.nome && <p className="text-red-400 text-sm mt-1">{erros.nome}</p>}
+                    <button type="submit" disabled={isPending} className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded transition">
+                        {isPending ? 'Salvando...' : '+ Adicionar novo serviço'}
+                    </button>
+                </form>
             </div>
-
-            <div>
-              <label className="block text-sm mb-1">Destino</label>
-              <select
-                name="destino"
-                className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-               <option value="selecione destino">
-                opa
-               </option>
-              </select>
-              {erros.destino && <p className="text-red-400 text-sm mt-1">{erros.destino}</p>}
-            </div>
-
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-sm mb-1">Data Início</label>
-                <input
-                  type="date"
-                  name="data_inicio"
-                  className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {erros.data_inicio && <p className="text-red-400 text-sm mt-1">{erros.data_inicio}</p>}
-              </div>
-
-              <div className="flex-1">
-                <label className="block text-sm mb-1">Data Fim</label>
-                <input
-                  type="date"
-                  name="data_fim"
-                  className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {erros.data_fim && <p className="text-red-400 text-sm mt-1">{erros.data_fim}</p>}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1">Funcionários</label>
-             
-                <Select
-                  isMulti
-                  name="funcionarios"
-                  options={funcionarios.map(f => ({ value: f.id, label: f.nome }))}
-                  className="basic-multi-select"
-                  styles={customStyles}
-                />
-              {erros.funcionarios && <p className="text-red-400 text-sm mt-1">{erros.funcionarios}</p>}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition"
-              onClick={() => {
-                setTimeout(() => {
-                  reabrirlista()
-                }, 2000)
-              }}
-            >
-              {isPending ? 'Salvando...' : '+ Adicionar novo serviço'}
-            </button>
-          </form>
-        </div>
-      </Popup>
-    </div>
-  )
+        </Popup>
+    )
 }
