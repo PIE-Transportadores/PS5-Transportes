@@ -23,7 +23,7 @@ export default function MapaPage() {
         setStatusMessage("Buscando dados da rota...");
         
         // Passo 1: Buscar todos os dados da rota da nossa nova API
-        const response = await fetch(`/api/servicos/${servicoId}/rota-data`);
+        const response = await fetch(`/api/servico/${servicoId}/rota-data`);
         const rotaData = await response.json();
 
         if (!response.ok) {

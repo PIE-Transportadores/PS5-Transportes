@@ -3,9 +3,8 @@
 "use server"; 
 
 import { PrismaClient } from '@prisma/client';
-import { getCoordinatesFromCEP } from '@/lib/geocode';
 import { revalidatePath } from 'next/cache';
-import { getAddressDetailsFromCEP } from '@/lib/geocode';
+import { getCoordinatesFromCEP, getAddressDetailsFromCEP } from '@/lib/geocode';
 
 const prisma = new PrismaClient();
 
@@ -125,13 +124,55 @@ export async function resolveRouteCoordinatesBatch(payload: BatchPayload) {
   return { success: true, details: results };
 }
 
-export async function getAddressFromCepAction(cep: string) {
-  // Ela chama a nossa nova função, sem tocar na de coordenadas
-  const addressDetails = await getAddressDetailsFromCEP(cep);
 
-  if (!addressDetails) {
-    return { error: 'CEP não encontrado ou inválido.' };
+// --- NOVO: DEFINIÇÃO DO TIPO DE RESPOSTA (O CONTRATO) ---
+// Adicionamos este tipo para que o TypeScript saiba exatamente o que esperar como retorno.
+export type CepActionResponse =
+  | {
+      success: true;
+      data: {
+        address: string;
+        district: string;
+        city: string;
+        state: string;
+        latitude: number;
+        longitude: number;
+      };
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+
+// --- MUDANÇA AQUI: Aplicando o tipo de retorno Promise<CepActionResponse> ---
+export async function getAddressFromCepAction(cep: string): Promise<CepActionResponse> {
+  try {
+    // Faz as duas chamadas em paralelo dentro do servidor
+    const [addressDetails, coordinates] = await Promise.all([
+      getAddressDetailsFromCEP(cep),
+      getCoordinatesFromCEP(cep)
+    ]);
+
+    if (!addressDetails || !coordinates) {
+      return { success: false, error: 'CEP não encontrado ou inválido.' };
+    }
+
+    // Retorna um único objeto de sucesso com todos os dados juntos
+    return { 
+      success: true, 
+      data: {
+        address: addressDetails.address,
+        district: addressDetails.district,
+        city: addressDetails.city,
+        state: addressDetails.state,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude
+      } 
+    };
+
+  } catch (error) {
+    console.error("Erro na Server Action getAddressFromCepAction:", error);
+    return { success: false, error: "Ocorreu um erro no servidor ao buscar dados do CEP." };
   }
-
-  return { success: true, data: addressDetails };
 }
