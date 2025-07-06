@@ -123,8 +123,6 @@ export async function resolveRouteCoordinatesBatch(payload: BatchPayload) {
 
   console.log("Processamento em lote finalizado.", results);
   return { success: true, details: results };
-<<<<<<< HEAD
-=======
 }
 
 export async function getAddressFromCepAction(cep: string) {
@@ -136,5 +134,4 @@ export async function getAddressFromCepAction(cep: string) {
   }
 
   return { success: true, data: addressDetails };
->>>>>>> Joao-lira
 }

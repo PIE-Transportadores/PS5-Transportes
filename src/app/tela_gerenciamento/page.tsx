@@ -7,7 +7,6 @@ import ModalVeiculos from '../componetes/cadastro_veiculos/modal_veiculos'
 //import ModalAlojamento from '../componetes/cadastro_alojamento/modal_alojamento'
 import Viws_aloj from './Gerenciamento-alojamento/Viws_aloj'
 import Viws_serv from './Gerenciamento-servico/page'
-import Viws_garagem from './Gerenciamento-garagem/page'
 
 export default function Tela_gerenciamento(){
 

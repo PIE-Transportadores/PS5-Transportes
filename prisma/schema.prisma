@@ -1,5 +1,3 @@
-// /prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,33 +8,32 @@ datasource db {
 }
 
 model cadastro_funcionario {
-  id          Int      @id @default(autoincrement())
-  nome        String
-  cpf         String
-  turno       String
-  alojamento  String
+  id         Int    @id @default(autoincrement())
+  nome       String
+  cpf        String
+  turno      String
+  alojamento String
 }
 
 model cadastro_alojamento {
-  id          Int      @id @default(autoincrement())
-  alojamento  String
-  cep         String   // <-- CORRIGIDO de Int para String
-  rua         String
-  bairro      String
-  numero      Int
-  capacidade  Int ?
-  // CAMPOS ADICIONADOS
-  latitude    Float?
-  longitude   Float?
+  id         Int    @id @default(autoincrement())
+  alojamento String
+  cep        String
+  rua        String
+  bairro     String
+  numero     Int
+  capacidade Int?
+  latitude   Float?
+  longitude  Float?
 }
 
 model usuario {
   id         Int      @id @default(autoincrement())
   nome       String
-  email      String   @unique
+  email      String   @unique(map: "email")
   password   String
   sexo       String
-  dataCriada DateTime
+  dataCriada DateTime @db.DateTime(0)
 }
 
 model cadastro_veiculo {
@@ -49,25 +46,23 @@ model cadastro_veiculo {
 }
 
 model cadastro_destino {
-  id      Int    @id @default(autoincrement())
-  destino String
-  rua     String
-  bairro  String
-  numero  Int
-  cep     String
-  // CAMPOS ADICIONADOS
+  id        Int    @id @default(autoincrement())
+  destino   String
+  rua       String
+  bairro    String
+  numero    Int
+  cep       String
   latitude  Float?
   longitude Float?
 }
 
 model cadastro_garagem {
-  id      Int    @id @default(autoincrement())
-  garagem String
-  rua     String
-  bairro  String
-  numero  Int
-  cep     String
-  // CAMPOS ADICIONADOS
+  id        Int    @id @default(autoincrement())
+  garagem   String
+  rua       String
+  bairro    String
+  numero    Int
+  cep       String
   latitude  Float?
   longitude Float?
 }
@@ -76,6 +71,6 @@ model cadastro_servico {
   id         Int      @id @default(autoincrement())
   servico    String
   destino    String
-  dataInicio DateTime
-  dataFim    DateTime
+  dataInicio DateTime @db.DateTime(0)
+  dataFim    DateTime @db.DateTime(0)
 }
