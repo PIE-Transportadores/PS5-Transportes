@@ -1,3 +1,8 @@
+import Link from 'next/link'
+
+
+
+
 export default function Home1() {
   return (
     <div className="bg-gray-100">
@@ -37,12 +42,12 @@ export default function Home1() {
             >
               Contato
             </a>
-            <button className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 px-4 py-2 rounded-md text-sm font-semibold">
+            <Link
+              href='/componetes/Tela_login'
+              className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 px-4 py-2 rounded-md text-sm font-semibold transition duration-300"
+            >
               Login
-            </button>
-            <button className="bg-primary-light text-white hover-bg-primary-lighter px-4 py-2 rounded-md text-sm font-semibold">
-              Cadastro
-            </button>
+            </Link>
           </nav>
         </div>
       </header>

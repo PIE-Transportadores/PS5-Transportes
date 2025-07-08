@@ -5,7 +5,16 @@ import {prisma} from '@/lib/prisma'
 export async function GET() {
     try{
 
-        const servico = await prisma.cadastro_servico.findMany()
+        const servico = await prisma.cadastro_servico.findMany({
+            include:{
+                destino: true,
+                funcionarios:{
+                    include:{
+                        funcionario:true
+                    }
+                }
+            }
+        })
 
         
         return NextResponse.json(servico)

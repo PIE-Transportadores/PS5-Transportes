@@ -11,7 +11,13 @@ interface Funcionario{
     nome: string
     cpf: string
     turno:string
-    alojamento:string
+    alojamento: {
+      id: number;
+      alojamento: string;
+    } | null;
+    telefone: string
+    cargo: string
+    sexo: string
 }
 
 export default  function Viws_func({isOpen_func,onClose_func}:any){
@@ -125,6 +131,9 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
                   <th className="px-6 py-3">CPF</th>
                   <th className="px-6 py-3">Turno</th>
                   <th className="px-6 py-3">Alojamento</th>
+                  <th className="px-6 py-3">telefone</th>
+                  <th className="px-6 py-3">cargo</th>
+                  <th className="px-6 py-3">sexo</th>
                   <th className="px-6 py-3 text-center" colSpan={2}>Ações</th>
                 </tr>
               </thead>
@@ -134,7 +143,10 @@ export default  function Viws_func({isOpen_func,onClose_func}:any){
                     <td className="px-6 py-4">{func.nome}</td>
                     <td className="px-6 py-4">{func.cpf}</td>
                     <td className="px-6 py-4">{func.turno}</td>
-                    <td className="px-6 py-4">{func.alojamento}</td>
+                    <td className="px-6 py-4">{func.alojamento?.alojamento || 'N/A'}</td>
+                    <td className="px-6 py-4">{func.telefone}</td>
+                    <td className="px-6 py-4">{func.cargo}</td>
+                    <td className="px-6 py-4">{func.sexo}</td>
                     <td className="px-3 py-4">
                       <button 
                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"

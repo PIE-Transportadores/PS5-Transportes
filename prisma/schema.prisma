@@ -10,17 +10,21 @@ datasource db {
 }
 
 model cadastro_funcionario {
-  id         Int    @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   nome       String
-  cpf        String
+  cpf        String   @unique // Garante que cada CPF seja único no banco
+  telefone   String   // Novo campo para o telefone
+  cargo      String   // Novo campo para o cargo
+  sexo       String   // Novo campo para o sexo
   turno      String
-  
+
   // Relação com Alojamento
   alojamentoId Int?
   alojamento   cadastro_alojamento? @relation(fields: [alojamentoId], references: [id])
 
   servicos   servico_funcionario[]
 }
+
 
 
 model cadastro_alojamento {

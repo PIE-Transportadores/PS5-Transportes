@@ -127,7 +127,7 @@ export default function ModalGaragem({ isOpen, onClose, reabrirlista }: { isOpen
         <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-[700px] h-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-sans">Cadastro de Garagem</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">&times;</button>
+            <button onClick={()=>{onClose();reabrirlista()}} className="text-gray-400 hover:text-white text-xl">&times;</button>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -196,19 +196,19 @@ export default function ModalGaragem({ isOpen, onClose, reabrirlista }: { isOpen
              </div>
              <div className="grid grid-cols-2 gap-2">
                <div>
-                 <label className="block text-sm mb-1">Latitude</label>
+                 <label className="block text-sm mb-1"></label>
                  <input
                    className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
-                   type="text"
+                   type="hidden"
                    value={latitude}
                    readOnly
                  />
                </div>
                <div>
-                 <label className="block text-sm mb-1">Longitude</label>
+                 <label className="block text-sm mb-1"></label>
                  <input
                    className="w-full p-2 bg-gray-700 text-white rounded border border-gray-600"
-                   type="text"
+                   type="hidden"
                    value={longitude}
                    readOnly
                  />
@@ -222,7 +222,7 @@ export default function ModalGaragem({ isOpen, onClose, reabrirlista }: { isOpen
                {isPending ? 'Salvando...' : 'Cadastrar'}
              </button>
              {/* AGORA STATE.ERRO FUNCIONA SEM ERROS */}
-             {state?.erro && <p className="text-red-400 text-sm mt-1">{state.erro}</p>}
+             
           </form>
         </div>
       </Popup>

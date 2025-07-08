@@ -2,48 +2,31 @@
 import Popup from "@/modal/modal_cadastro_destinos/popup"
 import CriarDestino from "@/action/service/destino-service";
 import React, { useEffect, useState, useTransition } from "react";
+import { getAddressFromCepAction } from "@/action/cepAction"; // Usando a mesma Server Action da Garagem
 
-// O tipo de estado do formulário permanece o mesmo
 type FormState = {
     sucesso: boolean;
     message: string;
-    errors?: {
-        [key: string]: string[] | undefined;
-    } | null;
+    errors?: { [key: string]: string[] | undefined; } | null;
 }
 
 const inicializarForm: FormState = { sucesso: false, message: "", errors: null }
-
-// Apenas a função de buscar endereço por CEP permanece no cliente
-async function buscarEnderecoPorCep(cep: string) {
-    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-    if (!response.ok) return null;
-    return await response.json();
-}
-
-// REMOVIDO: A função buscarLatLongPorEndereco não é mais necessária aqui.
-// Ela será movida para o servidor.
 
 export default function ModalDestinos({ isOpen, onClose, reabrirlista }: any) {
     const [state, formAction] = React.useActionState(CriarDestino, inicializarForm)
     const [isPending, startTransition] = useTransition()
     
+    // Estados para controlar os campos e os erros
     const [erros, setErrors] = useState<any>({})
-
-    // Estados do formulário (sem latitude e longitude)
-    const [destino, setDestino] = useState("")
+    const [cep, setCep] = useState("")
     const [rua, setRua] = useState("")
     const [bairro, setBairro] = useState("")
     const [cidade, setCidade] = useState("")
     const [estado, setEstado] = useState("")
-    const [numero, setNumero] = useState("")
-    const [cep, setCep] = useState("")
     
-    // REMOVIDO: Os estados de latitude e longitude não são mais necessários no cliente
-    // const [latitude, setLatitude] = useState("")
-    // const [longitude, setLongitude] = useState("")
+    const [isFetchingCep, setIsFetchingCep] = useState(false);
+    const [erroCep, setErroCep] = useState<string | null>(null);
 
-    // Efeito para tratar a resposta da Server Action (sucesso ou erro)
     useEffect(() => {
         if (state.sucesso && isOpen) {
             alert(state.message || "Destino cadastrado com sucesso!");
@@ -56,89 +39,117 @@ export default function ModalDestinos({ isOpen, onClose, reabrirlista }: any) {
             }
         }
     }, [state, isOpen, onClose, reabrirlista]);
-
-    // Efeito para buscar o endereço quando o CEP é digitado
-    useEffect(() => {
-        if (cep.length === 8) {
-            buscarEnderecoPorCep(cep).then(data => {
-                if (data && !data.erro) {
-                    setRua(data.logradouro || "");
-                    setBairro(data.bairro || "");
-                    setCidade(data.localidade || "");
-                    setEstado(data.uf || "");
-                }
-            });
-        }
-    }, [cep]);
     
-    // REMOVIDO: O useEffect para buscar coordenadas não é mais necessário.
+    // --- ATUALIZADO: Lógica para buscar endereço e coordenadas via Server Action ---
+    const handleCepBlur = async (event: React.FocusEvent<HTMLInputElement>) => {
+        const form = event.currentTarget.form;
+        if (!form) return;
 
-    // A função de submit agora é muito mais simples
+        const cepValue = event.target.value.replace(/\D/g, '');
+
+        if (cepValue.length !== 8) return;
+
+        setIsFetchingCep(true);
+        setErroCep(null);
+
+        const result = await getAddressFromCepAction(cepValue);
+
+        setIsFetchingCep(false);
+
+        if (result.success) {
+            setRua(result.data.address ?? '');
+            setBairro(result.data.district ?? '');
+            setCidade(result.data.city ?? '');
+            setEstado(result.data.state ?? '');
+
+            // Preenche os inputs ocultos com as coordenadas
+            (form.elements.namedItem('latitude') as HTMLInputElement).value = result.data.latitude.toString();
+            (form.elements.namedItem('longitude') as HTMLInputElement).value = result.data.longitude.toString();
+
+            (form.elements.namedItem('numero') as HTMLInputElement)?.focus();
+        } else {
+            setErroCep(result.error || "CEP não encontrado");
+            setRua("");
+            setBairro("");
+            setCidade("");
+            setEstado("");
+        }
+    };
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        
         setErrors({});
-
         startTransition(() => {
-            // Apenas chama a action com os dados do formulário.
-            // O servidor cuidará do resto.
             formAction(formData);
         });
+    }
+
+    const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        value = value.replace(/\D/g, "");
+        value = value.replace(/^(\d{5})(\d)/, "$1-$2");
+        setCep(value.slice(0, 9));
     }
 
     return (
         <div className="modal_destinos">
             <Popup isOpen={isOpen} onClose={onClose}>
-                <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold">Cadastrar Destino</h2>
-                        <button onClick={onClose} className="text-gray-400 hover:text-white text-xl">×</button>
+                <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-semibold">Cadastrar Novo Destino</h2>
+                        <button onClick={()=>{onClose();reabrirlista()}} className="text-gray-400 hover:text-white text-2xl">×</button>
                     </div>
                     
-                    <form onSubmit={handleSubmit} key={JSON.stringify(erros)} className="space-y-4">
-                        {/* Seus inputs continuam exatamente os mesmos */}
-                        <div>
-                            <label className="block text-sm mb-1">Nome do Destino</label>
-                            <input type="text" name="destino" value={destino} onChange={e => setDestino(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.destino && <p className="text-red-400 text-sm mt-1">{erros.destino[0]}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">CEP</label>
-                            <input type="text" name="cep" value={cep} onChange={e => setCep(e.target.value.replace(/\D/g, ''))} maxLength={8} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.cep && <p className="text-red-400 text-sm mt-1">{erros.cep[0]}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">Rua</label>
-                            <input type="text" name="rua" value={rua} onChange={e => setRua(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.rua && <p className="text-red-400 text-sm mt-1">{erros.rua[0]}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">Bairro</label>
-                            <input type="text" name="bairro" value={bairro} onChange={e => setBairro(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.bairro && <p className="text-red-400 text-sm mt-1">{erros.bairro[0]}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">Cidade</label>
-                            <input type="text" name="cidade" value={cidade} onChange={e => setCidade(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.cidade && <p className="text-red-400 text-sm mt-1">{erros.cidade[0]}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">Estado</label>
-                            <input type="text" name="estado" value={estado} onChange={e => setEstado(e.target.value)} maxLength={2} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.estado && <p className="text-red-400 text-sm mt-1">{erros.estado[0]}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1">Número</label>
-                            <input type="text" name="numero" value={numero} onChange={e => setNumero(e.target.value)} className="w-full p-2 bg-gray-700 rounded"/>
-                            {erros.numero && <p className="text-red-400 text-sm mt-1">{erros.numero[0]}</p>}
+                    <form onSubmit={handleSubmit} key={JSON.stringify(erros)}>
+                        <div className="grid md:grid-cols-2 md:gap-x-6 space-y-4 md:space-y-0">
+                            <div className="md:col-span-2">
+                                <label className="block text-sm mb-1">Nome do Destino</label>
+                                <input type="text" name="destino" placeholder="Ex: Fazenda Santa Maria, Cliente XYZ" className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erros.destino && <p className="text-red-400 text-sm mt-1">{erros.destino[0]}</p>}
+                            </div>
+                            <div className="pt-4 md:pt-4">
+                                <label className="block text-sm mb-1">CEP</label>
+                                <input type="text" name="cep" value={cep} onChange={handleCepChange} onBlur={handleCepBlur} placeholder="00000-000" className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erroCep && <p className="text-red-400 text-sm mt-1">{erroCep}</p>}
+                                {isFetchingCep && <p className="text-blue-400 text-sm mt-1">Buscando...</p>}
+                            </div>
+                            <div className="pt-4 md:pt-4">
+                                <label className="block text-sm mb-1">Rua</label>
+                                <input type="text" name="rua" value={rua} onChange={e => setRua(e.target.value)} placeholder="Rua, Avenida, etc." className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erros.rua && <p className="text-red-400 text-sm mt-1">{erros.rua[0]}</p>}
+                            </div>
+                            <div className="pt-4 md:pt-4">
+                                <label className="block text-sm mb-1">Bairro</label>
+                                <input type="text" name="bairro" value={bairro} onChange={e => setBairro(e.target.value)} className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erros.bairro && <p className="text-red-400 text-sm mt-1">{erros.bairro[0]}</p>}
+                            </div>
+                            <div className="pt-4 md:pt-4">
+                                <label className="block text-sm mb-1">Número</label>
+                                <input type="text" name="numero" className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erros.numero && <p className="text-red-400 text-sm mt-1">{erros.numero[0]}</p>}
+                            </div>
+                            <div className="pt-4 md:pt-4">
+                                <label className="block text-sm mb-1">Cidade</label>
+                                <input type="text" name="cidade" value={cidade} onChange={e => setCidade(e.target.value)} className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erros.cidade && <p className="text-red-400 text-sm mt-1">{erros.cidade[0]}</p>}
+                            </div>
+                            <div className="pt-4 md:pt-4">
+                                <label className="block text-sm mb-1">Estado</label>
+                                <input type="text" name="estado" value={estado} onChange={e => setEstado(e.target.value)} maxLength={2} placeholder="UF" className="w-full p-2 bg-gray-700 rounded border border-gray-600"/>
+                                {erros.estado && <p className="text-red-400 text-sm mt-1">{erros.estado[0]}</p>}
+                            </div>
+                            
+                            {/* --- ATUALIZADO: Inputs ocultos para latitude e longitude --- */}
+                            <input type="hidden" name="latitude" />
+                            <input type="hidden" name="longitude" />
                         </div>
                         
-                        {/* REMOVIDO: Os campos ocultos não são mais necessários */}
-                        
-                        <button type="submit" disabled={isPending} className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded transition disabled:bg-gray-500">
-                            {isPending ? 'Salvando...' : '+ Adicionar novo destino'}
-                        </button>
+                        <div className="pt-6">
+                            <button type="submit" disabled={isPending} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 rounded transition disabled:bg-gray-500 font-semibold">
+                                {isPending ? 'Salvando...' : '+ Adicionar Novo Destino'}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </Popup>
